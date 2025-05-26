@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zdrada wśród Bananów</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fffde6;
+      color: #333;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    .btn {
+      display: block;
+      background-color: #f4d03f;
+      color: #000;
+      border: none;
+      padding: 10px;
+      margin: 10px 0;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .btn:hover {
+      background-color: #f1c40f;
+    }
+  </style>
+</head>
+<body>
+  <h1>Zdrada wśród Bananów</h1>
+  <div id="game"></div>
+
+  <script>
+    const postacie = {
+      "Eryk": `Graliśmy razem w Wild Rifta, jak brat z bratem.<br>
+A potem BAM – poszedłeś do Wach jak jungler do krzaków... bez info!<br>
+Zdrada boli bardziej niż ulti Yasuo bez crita.`,
+      "Fabian": `Dawałem ci jadłospisy, treningi, nawet motywację.<br>
+Zamiast budować mięśnie, budowałeś zdradę z Wach.<br>
+Z taką lojalnością nie zrobisz nawet pompki.`,
+      "Nikola": `Byłeś emocjonalnym śmietnikiem.<br>
+Nie dość, że zostawiłeś grupę, to jeszcze zostawiłeś po sobie syf.<br>
+Zgniły banan to za mało powiedziane.`,
+      "Ola": `Nie muszę cię dobrze znać, żeby widzieć, że jesteś totalnym żartem.<br>
+Twoje wybory to jak zgniła mandarynka wśród bananów.<br>
+Zdradzasz ludzi szybciej niż wi-fi w piwnicy.`,
+      "Jakub": `Nie znam cię za dobrze i nie chcę znać.<br>
+Twoja energia jest jak tania cola – udaje coś więcej, ale tylko bąbelki i puste kalorie.<br>
+Jebie mnie to, ale musisz dostać swoje.`
+    };
+
+    const decyzje = [
+      "Wypomnieć mu zdradę publicznie",
+      "Zorganizować sąd Bananowy",
+      "Daj mu jedną, ale żałosną szansę"
+    ];
+
+    const game = document.getElementById("game");
+
+    function startGame() {
+      game.innerHTML = `<p>Bartosz zdradził waszą grupę – Bananowe Banany – i dołączył do Oliwii Wach.</p>
+        <p>Wybierz swoją postać:</p>`;
+      Object.keys(postacie).forEach(name => {
+        const btn = document.createElement("button");
+        btn.textContent = name;
+        btn.className = "btn";
+        btn.onclick = () => beginStory(name);
+        game.appendChild(btn);
+      });
+    }
+
+    function beginStory(player) {
+      game.innerHTML = `<h2>${player}</h2><p>${postacie[player]}</p><p>Co robisz?</p>`;
+      decyzje.forEach((opcja, index) => {
+        const btn = document.createElement("button");
+        btn.textContent = opcja;
+        btn.className = "btn";
+        btn.onclick = () => endGame(player, index);
+        game.appendChild(btn);
+      });
+    }
+
+    function endGame(player, decyzja) {
+      const reakcje = [
+        `${player}: Twoje zagranie było jak troll w soloq – niepotrzebne i szkodliwe.`,
+        `${player}: Publiczne zdjęcie zgniłego banana już krąży po grupie.`,
+        `${player}: Dobra, dostajesz szansę... ale to twoje ostatnie życie.`
+      ];
+      game.innerHTML = `<h2>Koniec</h2><p>${reakcje[decyzja]}</p><p>Bartosz został rozliczony. Bananowe Banany znów są wolne od zdrady.</p>`;
+    }
+
+    startGame();
+  </script>
+</body>
+</html>
