@@ -53,7 +53,7 @@
     <button onclick="startGame('Nikola')">Nikola</button>
     <button onclick="startGame('Ola')">Ola</button>
     <button onclick="startGame('Jakub')">Jakub</button>
-    <button onclick="startGame('Maja')">Maja</button>
+    <button onclick="startGame('Kot')">Kot</button>
   </div>
   <div id="text"></div>
   <div id="choices"></div>
@@ -196,25 +196,25 @@ const characters = {
     ]
   },
 
-  Maja: {
-    intro: `Maja mówi: "Hej Bartek, słyszałam o twoich problemach. Może czas na nowy rozdział? Może randka?"`,
+  Kot: {
+    intro: `Kot mówi: "Hej Bartek, słyszałem o twoich problemach. Może czas na nowy rozdział? Może randka?"`,
     steps: [
       {
-        text: `Maja: "Chcesz się spotkać i pokazać, że nie jesteś tylko cwelem?"`,
+        text: `Kot: "Chcesz się spotkać i pokazać, że nie jesteś tylko cwelem?"`,
         choices: [
           { text: "Tak, spróbujmy.", next: 1 },
           { text: "Nie, nie mam ochoty.", next: 2 }
         ]
       },
       {
-        text: `Maja: "Super! Spotkajmy się i zobaczmy, czy coś z tego będzie."`,
+        text: `Kot: "Super! Spotkajmy się i zobaczmy, czy coś z tego będzie."`,
         choices: [
           { text: "Jestem gotów.", next: 'end' },
           { text: "Chyba się rozmyśliłem.", next: 'end' }
         ]
       },
       {
-        text: `Maja: "Rozumiem. Może kiedy indziej."`,
+        text: `Kot: "Rozumiem. Może kiedy indziej."`,
         choices: [
           { text: "Może tak.", next: 'end' },
           { text: "Do widzenia.", next: 'end' }
@@ -238,5 +238,55 @@ function startGame(character) {
   ]);
 }
 
-function nextStep() {
+function showText(text) {
+  document.getElementById("text").innerText = text;
+}
+
+function showChoices(choices) {
+  const choicesDiv = document.getElementById("choices");
+  choicesDiv.innerHTML = "";
+  choices.forEach(choice => {
+    const btn = document.createElement("button");
+    btn.innerText = choice.text;
+    btn.onclick = choice.action;
+    choicesDiv.appendChild(btn);
+  });
+}
+
+function nextStep(choiceIndex = null) {
   const charData = characters[currentCharacter];
+  if (step === 0 && choiceIndex === null) {
+    // Po intro przechodzimy do pierwszego kroku dialogu
+    step = 0;
+    showText(charData.steps[step].text);
+    showChoices(charData.steps[step].choices.map((c, i) => ({
+      text: c.text,
+      action: () => nextStep(i)
+    })));
+    return;
+  }
+
+  if (choiceIndex !== null) {
+    const nextStepIndex = charData.steps[step].choices[choiceIndex].next;
+    if (nextStepIndex === 'end') {
+      endGame();
+      return;
+    } else {
+      step = nextStepIndex;
+    }
+  }
+
+  showText(charData.steps[step].text);
+  showChoices(charData.steps[step].choices.map((c, i) => ({
+    text: c.text,
+    action: () => nextStep(i)
+  })));
+}
+
+function endGame() {
+  showText("Koniec gry. Dzięki za granie!");
+  document.getElementById("choices").innerHTML = '<button onclick="location.reload()">Zagraj ponownie</button>';
+}
+</script>
+</body>
+</html>
