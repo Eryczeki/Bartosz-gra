@@ -1,15 +1,14 @@
-<!DOCTYPE html>
-<html lang="pl">
+<!DOCTYPE html><html lang="pl">
 <head>
 <meta charset="UTF-8" />
-<title>Zdrada Bartosza - Rozszerzona Gra</title>
+<title>Zdrada Bartosza - Rozbudowana Gra</title>
 <style>
   body {
     font-family: Arial, sans-serif;
     background: #fffbe6;
     color: #333;
     padding: 20px;
-    max-width: 700px;
+    max-width: 800px;
     margin: auto;
   }
   #game {
@@ -44,7 +43,7 @@
 </style>
 </head>
 <body>
-<h1>Zdrada Bartosza - Rozszerzona Gra Tekstowa</h1>
+<h1>Zdrada Bartosza - Rozbudowana Gra Tekstowa</h1>
 <div id="game">
   <div id="character-choice">
     <p>Wybierz postać, z której perspektywy chcesz zagrać:</p>
@@ -57,9 +56,7 @@
   </div>
   <div id="text"></div>
   <div id="choices"></div>
-</div>
-
-<script>
+</div><script>
 const characters = {
   Eryk: {
     intro: `Eryk mówi: "Bartek? Ten cwel, co grał ze mną w Wild Rift i zdradził naszą ekipę. Nie zapomnę mu tego."`,
@@ -68,26 +65,35 @@ const characters = {
         text: `Pamiętasz jak razem graliśmy Wild Rift? A ty zamiast pomóc, to poszedłeś do Oliwii. Cwel!`,
         choices: [
           { text: "Przepraszam, Eryk, to był błąd.", next: 1 },
-          { text: "Co z tego, mam nową ekipę.", next: 2 }
+          { text: "Co z tego, mam nową ekipę.", next: 2 },
+          { text: "To nie była zdrada, po prostu zmieniłem priorytety.", next: 3 }
         ]
       },
       {
         text: `Eryk: "Może ci wybaczę, ale nie zapominaj – w Wild Rift trzeba mieć honor."`,
         choices: [
           { text: "Obiecuję, że się poprawię.", next: 'end' },
-          { text: "Honor? Miałem to gdzieś.", next: 'end' }
+          { text: "Honor? Miałem to gdzieś.", next: 'end' },
+          { text: "Zagramy jeszcze razem?", next: 'end' }
         ]
       },
       {
         text: `Eryk: "No to powodzenia z nową ekipą, Bartek. My trzymamy się swoich."`,
         choices: [
           { text: "Dzięki, Eryk.", next: 'end' },
-          { text: "Cwelu!", next: 'end' }
+          { text: "Cwelu!", next: 'end' },
+          { text: "Zmienisz zdanie, zobaczysz.", next: 'end' }
+        ]
+      },
+      {
+        text: `Eryk: "Zmiana priorytetów nie oznacza porzucenia przyjaciół. Pomyśl o tym."`,
+        choices: [
+          { text: "Masz rację.", next: 'end' },
+          { text: "Nie muszę się tłumaczyć.", next: 'end' }
         ]
       }
     ]
   },
-
   Fabian: {
     intro: `Fabian mówi: "Bartek, ty frajerze. Dawałem ci jadłospisy i treningi, a ty nas zdradziłeś. Żenada."`,
     steps: [
@@ -95,129 +101,165 @@ const characters = {
         text: `Fabian: "Masz w dupie treningi, a potem nas zawiodłeś. Jak ci teraz mięśnie?"`,
         choices: [
           { text: "Ćwiczę u nowej ekipy.", next: 1 },
-          { text: "Co mnie obchodzi ten cały sport?", next: 2 }
+          { text: "Co mnie obchodzi ten cały sport?", next: 2 },
+          { text: "Chciałem po prostu odpocząć.", next: 3 }
         ]
       },
       {
         text: `Fabian: "No to przynajmniej próbuj, bo inaczej to tylko cwelem zostaniesz."`,
         choices: [
           { text: "Wiem, już się poprawiam.", next: 'end' },
-          { text: "Nie obchodzi mnie to, mam lepsze rzeczy do roboty.", next: 'end' }
+          { text: "Nie obchodzi mnie to, mam lepsze rzeczy do roboty.", next: 'end' },
+          { text: "Dzięki za rady, Fabian.", next: 'end' }
         ]
       },
       {
         text: `Fabian: "Daj znać, gdy będziesz gotów wrócić do treningów, Bartek."`,
         choices: [
           { text: "Może kiedyś.", next: 'end' },
-          { text: "Nigdy.", next: 'end' }
+          { text: "Nigdy.", next: 'end' },
+          { text: "Zastanowię się.", next: 'end' }
+        ]
+      },
+      {
+        text: `Fabian: "Odpoczynek jest ważny, ale nie kosztem lojalności. Zastanów się nad tym."`,
+        choices: [
+          { text: "Masz rację.", next: 'end' },
+          { text: "Już postanowiłem.", next: 'end' }
         ]
       }
     ]
   },
-
   Nikola: {
-    intro: `Nikola mówi: "Bartek był dla mnie okropny i zostawił mnie. Teraz jeszcze zdradza grupę. Co za cwel."`,
+    intro: `Nikola mówi: "Bartek... byłeś dla mnie okropny. Nie zapomnę, jak to się skończyło."`,
     steps: [
       {
-        text: `Nikola: "Zostawiłeś mnie na lodzie, a teraz zdradzasz wszystkich? Gratulacje, geniuszu."`,
+        text: `Nikola: "Zostawiłeś mnie i zdradziłeś naszą grupę. Jak mogłeś?"`,
         choices: [
-          { text: "Przepraszam, Nikola, nie tak miało być.", next: 1 },
-          { text: "Nie obchodzi mnie twoja opinia.", next: 2 }
+          { text: "Nie chciałem cię skrzywdzić.", next: 1 },
+          { text: "Tak wyszło, bywa.", next: 2 },
+          { text: "To nie twoja sprawa.", next: 3 }
         ]
       },
       {
-        text: `Nikola: "Przeprosiny nie wystarczą, ale może kiedyś się ogarniesz."`,
+        text: `Nikola: "Zawsze było tylko twoje ego. Może to kara."`,
         choices: [
-          { text: "Spróbuję się poprawić.", next: 'end' },
-          { text: "Nie mam zamiaru.", next: 'end' }
+          { text: "Chcę się zmienić.", next: 'end' },
+          { text: "Mam to gdzieś.", next: 'end' }
         ]
       },
       {
-        text: `Nikola: "Tak trzymaj, Bartek. Nie licz na mnie."`,
+        text: `Nikola: "Bez komentarza. Jesteś żałosny."`,
+        choices: [
+          { text: "Trudno.", next: 'end' }
+        ]
+      },
+      {
+        text: `Nikola: "Taki właśnie jesteś – odcinasz się, gdy jest trudno."`,
+        choices: [
+          { text: "Nie jestem taki.", next: 'end' },
+          { text: "Jestem jaki jestem.", next: 'end' }
+        ]
+      }
+    ]
+  },
+  Ola: {
+    intro: `Ola mówi: "Nie znam cię dobrze, ale słyszałam wystarczająco dużo. Cwel jak się patrzy."`,
+    steps: [
+      {
+        text: `Ola: "Jak można tak po prostu olać ekipę i polecieć do byłej?"`,
+        choices: [
+          { text: "Nie wiedziałem, że to źle.", next: 1 },
+          { text: "To moja sprawa.", next: 2 },
+          { text: "Wszyscy przesadzacie.", next: 3 }
+        ]
+      },
+      {
+        text: `Ola: "To wiedz na przyszłość – lojalność ma znaczenie."`,
         choices: [
           { text: "Zrozumiałem.", next: 'end' },
-          { text: "Cwel z cwelów.", next: 'end' }
+          { text: "Nie obchodzi mnie to.", next: 'end' }
+        ]
+      },
+      {
+        text: `Ola: "A ja mam prawo mówić, co myślę. I uważam cię za frajera."`,
+        choices: [
+          { text: "Dzięki, Ola.", next: 'end' },
+          { text: "Miłego dnia...", next: 'end' }
+        ]
+      },
+      {
+        text: `Ola: "Kiedy wszyscy cię jebią, może warto się nad sobą zastanowić."`,
+        choices: [
+          { text: "Może masz rację.", next: 'end' },
+          { text: "To wasz problem.", next: 'end' }
         ]
       }
     ]
   },
-
-  Ola: {
-    intro: `Ola mówi: "Bartek, ty cwelu, nie wiem co o tobie myśleć, ale na pewno nie pozytywnie."`,
-    steps: [
-      {
-        text: `Ola: "Nie ufam ci i mam dość twoich gierek."`,
-        choices: [
-          { text: "Chcę się naprawić.", next: 1 },
-          { text: "Nie przejmuj się mną.", next: 2 }
-        ]
-      },
-      {
-        text: `Ola: "Może masz szansę, ale na razie jesteś poza ekipą."`,
-        choices: [
-          { text: "Dzięki za szansę.", next: 'end' },
-          { text: "Nie potrzebuję was.", next: 'end' }
-        ]
-      },
-      {
-        text: `Ola: "Jakub też ma o tobie niezłe zdanie, więc lepiej się pilnuj."`,
-        choices: [
-          { text: "Wiem, postaram się.", next: 'end' },
-          { text: "Jebie mnie to.", next: 'end' }
-        ]
-      }
-    ]
-  },
-
   Jakub: {
-    intro: `Jakub mówi: "Bartek? Nie znam cię dobrze, ale i tak cię jebie. Nie dla nas jesteś."`,
+    intro: `Jakub mówi: "W sumie cię nie znałem, ale jak wszyscy cię jebią, to coś musi być na rzeczy."`,
     steps: [
       {
-        text: `Jakub: "Nie interesuje mnie twoja historia, tylko fakt, że nas zdradziłeś."`,
+        text: `Jakub: "Nie wnikam, ale serio? Zdradzić ekipę przez laskę?"`,
         choices: [
-          { text: "Przepraszam, Jakub.", next: 1 },
-          { text: "Nie obchodzą mnie twoje zdanie.", next: 2 }
+          { text: "Nie myślałem o tym tak.", next: 1 },
+          { text: "Było warto.", next: 2 },
+          { text: "To złożone.", next: 3 }
         ]
       },
       {
-        text: `Jakub: "Może kiedyś zasłużysz na powrót, ale na razie nie licz na mnie."`,
+        text: `Jakub: "No to teraz myśl, bo ja bym ci ręki nie podał."`,
         choices: [
-          { text: "Spróbuję to naprawić.", next: 'end' },
-          { text: "Nie interesuje mnie to.", next: 'end' }
+          { text: "Rozumiem.", next: 'end' },
+          { text: "Nie zależy mi.", next: 'end' }
         ]
       },
       {
-        text: `Jakub: "Trzymaj się, Bartek. I pamiętaj, nie każdy cwel dostaje drugą szansę."`,
+        text: `Jakub: "To niech ci będzie, ale nie wracaj do nas z płaczem."`,
         choices: [
-          { text: "Dzięki, Jakub.", next: 'end' },
-          { text: "Cwel na zawsze.", next: 'end' }
+          { text: "Nie wrócę.", next: 'end' },
+          { text: "Zobaczymy.", next: 'end' }
+        ]
+      },
+      {
+        text: `Jakub: "Złożone sprawy też mają proste konsekwencje. Zdrada to zdrada."`,
+        choices: [
+          { text: "To boli.", next: 'end' },
+          { text: "Dzięki za info.", next: 'end' }
         ]
       }
     ]
   },
-
   Kot: {
-    intro: `Kot mówi: "Hej Bartek, słyszałem o twoich problemach. Może czas na nowy rozdział? Może randka?"`,
+    intro: `Kot mówi: "Cześć Bartek. Może... chcesz się spotkać?"`,
     steps: [
       {
-        text: `Kot: "Chcesz się spotkać i pokazać, że nie jesteś tylko cwelem?"`,
+        text: `Kot: "Wiem, co zrobiłeś, ale może dasz mi powód, by cię polubić."`,
         choices: [
-          { text: "Tak, spróbujmy.", next: 1 },
-          { text: "Nie, nie mam ochoty.", next: 2 }
+          { text: "Postaram się.", next: 1 },
+          { text: "Nie jestem dobry w takie rzeczy.", next: 2 },
+          { text: "Nie szukam nikogo.", next: 3 }
         ]
       },
       {
-        text: `Kot: "Super! Spotkajmy się i zobaczmy, czy coś z tego będzie."`,
+        text: `Kot: "Miło to słyszeć. Może dasz się zaprosić na spacer?"`,
         choices: [
-          { text: "Jestem gotów.", next: 'end' },
-          { text: "Chyba się rozmyśliłem.", next: 'end' }
+          { text: "Chętnie.", next: 'end' },
+          { text: "Zobaczymy.", next: 'end' }
         ]
       },
       {
-        text: `Kot: "Rozumiem. Może kiedy indziej."`,
+        text: `Kot: "Nie musisz być idealny. Po prostu nie bądź dupkiem."`,
         choices: [
-          { text: "Może tak.", next: 'end' },
-          { text: "Do widzenia.", next: 'end' }
+          { text: "Będę się starał.", next: 'end' },
+          { text: "Nie wiem, czy dam radę.", next: 'end' }
+        ]
+      },
+      {
+        text: `Kot: "Szkoda. Może kiedyś się jeszcze spotkamy."`,
+        choices: [
+          { text: "Może.", next: 'end' }
         ]
       }
     ]
@@ -256,7 +298,6 @@ function showChoices(choices) {
 function nextStep(choiceIndex = null) {
   const charData = characters[currentCharacter];
   if (step === 0 && choiceIndex === null) {
-    // Po intro przechodzimy do pierwszego kroku dialogu
     step = 0;
     showText(charData.steps[step].text);
     showChoices(charData.steps[step].choices.map((c, i) => ({
@@ -276,8 +317,8 @@ function nextStep(choiceIndex = null) {
     }
   }
 
-  showText(charData.steps[step].text);
-  showChoices(charData.steps[step].choices.map((c, i) => ({
+  showText(characters[currentCharacter].steps[step].text);
+  showChoices(characters[currentCharacter].steps[step].choices.map((c, i) => ({
     text: c.text,
     action: () => nextStep(i)
   })));
@@ -287,6 +328,5 @@ function endGame() {
   showText("Koniec gry. Dzięki za granie!");
   document.getElementById("choices").innerHTML = '<button onclick="location.reload()">Zagraj ponownie</button>';
 }
-</script>
-</body>
+</script></body>
 </html>
