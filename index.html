@@ -1,98 +1,242 @@
-
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Zdrada wśród Bananów</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #fffde6;
-      color: #333;
-      padding: 20px;
-      max-width: 600px;
-      margin: auto;
-    }
-    .btn {
-      display: block;
-      background-color: #f4d03f;
-      color: #000;
-      border: none;
-      padding: 10px;
-      margin: 10px 0;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .btn:hover {
-      background-color: #f1c40f;
-    }
-  </style>
+<meta charset="UTF-8" />
+<title>Zdrada Bartosza - Rozszerzona Gra</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #fffbe6;
+    color: #333;
+    padding: 20px;
+    max-width: 700px;
+    margin: auto;
+  }
+  #game {
+    border: 2px solid #cc9900;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #ffffcc;
+  }
+  button {
+    background-color: #cc9900;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px 5px 0 0;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #bb8800;
+  }
+  #character-choice button {
+    background-color: #666;
+  }
+  #character-choice button:hover {
+    background-color: #444;
+  }
+  #text {
+    margin-top: 15px;
+    min-height: 160px;
+  }
+</style>
 </head>
 <body>
-  <h1>Zdrada wśród Bananów</h1>
-  <div id="game"></div>
+<h1>Zdrada Bartosza - Rozszerzona Gra Tekstowa</h1>
+<div id="game">
+  <div id="character-choice">
+    <p>Wybierz postać, z której perspektywy chcesz zagrać:</p>
+    <button onclick="startGame('Eryk')">Eryk</button>
+    <button onclick="startGame('Fabian')">Fabian</button>
+    <button onclick="startGame('Nikola')">Nikola</button>
+    <button onclick="startGame('Ola')">Ola</button>
+    <button onclick="startGame('Jakub')">Jakub</button>
+    <button onclick="startGame('Maja')">Maja</button>
+  </div>
+  <div id="text"></div>
+  <div id="choices"></div>
+</div>
 
-  <script>
-    const postacie = {
-      "Eryk": `Graliśmy razem w Wild Rifta, jak brat z bratem.<br>
-A potem BAM – poszedłeś do Wach jak jungler do krzaków... bez info!<br>
-Zdrada boli bardziej niż ulti Yasuo bez crita.`,
-      "Fabian": `Dawałem ci jadłospisy, treningi, nawet motywację.<br>
-Zamiast budować mięśnie, budowałeś zdradę z Wach.<br>
-Z taką lojalnością nie zrobisz nawet pompki.`,
-      "Nikola": `Byłeś emocjonalnym śmietnikiem.<br>
-Nie dość, że zostawiłeś grupę, to jeszcze zostawiłeś po sobie syf.<br>
-Zgniły banan to za mało powiedziane.`,
-      "Ola": `Nie muszę cię dobrze znać, żeby widzieć, że jesteś totalnym żartem.<br>
-Twoje wybory to jak zgniła mandarynka wśród bananów.<br>
-Zdradzasz ludzi szybciej niż wi-fi w piwnicy.`,
-      "Jakub": `Nie znam cię za dobrze i nie chcę znać.<br>
-Twoja energia jest jak tania cola – udaje coś więcej, ale tylko bąbelki i puste kalorie.<br>
-Jebie mnie to, ale musisz dostać swoje.`
-    };
+<script>
+const characters = {
+  Eryk: {
+    intro: `Eryk mówi: "Bartek? Ten cwel, co grał ze mną w Wild Rift i zdradził naszą ekipę. Nie zapomnę mu tego."`,
+    steps: [
+      {
+        text: `Pamiętasz jak razem graliśmy Wild Rift? A ty zamiast pomóc, to poszedłeś do Oliwii. Cwel!`,
+        choices: [
+          { text: "Przepraszam, Eryk, to był błąd.", next: 1 },
+          { text: "Co z tego, mam nową ekipę.", next: 2 }
+        ]
+      },
+      {
+        text: `Eryk: "Może ci wybaczę, ale nie zapominaj – w Wild Rift trzeba mieć honor."`,
+        choices: [
+          { text: "Obiecuję, że się poprawię.", next: 'end' },
+          { text: "Honor? Miałem to gdzieś.", next: 'end' }
+        ]
+      },
+      {
+        text: `Eryk: "No to powodzenia z nową ekipą, Bartek. My trzymamy się swoich."`,
+        choices: [
+          { text: "Dzięki, Eryk.", next: 'end' },
+          { text: "Cwelu!", next: 'end' }
+        ]
+      }
+    ]
+  },
 
-    const decyzje = [
-      "Wypomnieć mu zdradę publicznie",
-      "Zorganizować sąd Bananowy",
-      "Daj mu jedną, ale żałosną szansę"
-    ];
+  Fabian: {
+    intro: `Fabian mówi: "Bartek, ty frajerze. Dawałem ci jadłospisy i treningi, a ty nas zdradziłeś. Żenada."`,
+    steps: [
+      {
+        text: `Fabian: "Masz w dupie treningi, a potem nas zawiodłeś. Jak ci teraz mięśnie?"`,
+        choices: [
+          { text: "Ćwiczę u nowej ekipy.", next: 1 },
+          { text: "Co mnie obchodzi ten cały sport?", next: 2 }
+        ]
+      },
+      {
+        text: `Fabian: "No to przynajmniej próbuj, bo inaczej to tylko cwelem zostaniesz."`,
+        choices: [
+          { text: "Wiem, już się poprawiam.", next: 'end' },
+          { text: "Nie obchodzi mnie to, mam lepsze rzeczy do roboty.", next: 'end' }
+        ]
+      },
+      {
+        text: `Fabian: "Daj znać, gdy będziesz gotów wrócić do treningów, Bartek."`,
+        choices: [
+          { text: "Może kiedyś.", next: 'end' },
+          { text: "Nigdy.", next: 'end' }
+        ]
+      }
+    ]
+  },
 
-    const game = document.getElementById("game");
+  Nikola: {
+    intro: `Nikola mówi: "Bartek był dla mnie okropny i zostawił mnie. Teraz jeszcze zdradza grupę. Co za cwel."`,
+    steps: [
+      {
+        text: `Nikola: "Zostawiłeś mnie na lodzie, a teraz zdradzasz wszystkich? Gratulacje, geniuszu."`,
+        choices: [
+          { text: "Przepraszam, Nikola, nie tak miało być.", next: 1 },
+          { text: "Nie obchodzi mnie twoja opinia.", next: 2 }
+        ]
+      },
+      {
+        text: `Nikola: "Przeprosiny nie wystarczą, ale może kiedyś się ogarniesz."`,
+        choices: [
+          { text: "Spróbuję się poprawić.", next: 'end' },
+          { text: "Nie mam zamiaru.", next: 'end' }
+        ]
+      },
+      {
+        text: `Nikola: "Tak trzymaj, Bartek. Nie licz na mnie."`,
+        choices: [
+          { text: "Zrozumiałem.", next: 'end' },
+          { text: "Cwel z cwelów.", next: 'end' }
+        ]
+      }
+    ]
+  },
 
-    function startGame() {
-      game.innerHTML = `<p>Bartosz zdradził waszą grupę – Bananowe Banany – i dołączył do Oliwii Wach.</p>
-        <p>Wybierz swoją postać:</p>`;
-      Object.keys(postacie).forEach(name => {
-        const btn = document.createElement("button");
-        btn.textContent = name;
-        btn.className = "btn";
-        btn.onclick = () => beginStory(name);
-        game.appendChild(btn);
-      });
-    }
+  Ola: {
+    intro: `Ola mówi: "Bartek, ty cwelu, nie wiem co o tobie myśleć, ale na pewno nie pozytywnie."`,
+    steps: [
+      {
+        text: `Ola: "Nie ufam ci i mam dość twoich gierek."`,
+        choices: [
+          { text: "Chcę się naprawić.", next: 1 },
+          { text: "Nie przejmuj się mną.", next: 2 }
+        ]
+      },
+      {
+        text: `Ola: "Może masz szansę, ale na razie jesteś poza ekipą."`,
+        choices: [
+          { text: "Dzięki za szansę.", next: 'end' },
+          { text: "Nie potrzebuję was.", next: 'end' }
+        ]
+      },
+      {
+        text: `Ola: "Jakub też ma o tobie niezłe zdanie, więc lepiej się pilnuj."`,
+        choices: [
+          { text: "Wiem, postaram się.", next: 'end' },
+          { text: "Jebie mnie to.", next: 'end' }
+        ]
+      }
+    ]
+  },
 
-    function beginStory(player) {
-      game.innerHTML = `<h2>${player}</h2><p>${postacie[player]}</p><p>Co robisz?</p>`;
-      decyzje.forEach((opcja, index) => {
-        const btn = document.createElement("button");
-        btn.textContent = opcja;
-        btn.className = "btn";
-        btn.onclick = () => endGame(player, index);
-        game.appendChild(btn);
-      });
-    }
+  Jakub: {
+    intro: `Jakub mówi: "Bartek? Nie znam cię dobrze, ale i tak cię jebie. Nie dla nas jesteś."`,
+    steps: [
+      {
+        text: `Jakub: "Nie interesuje mnie twoja historia, tylko fakt, że nas zdradziłeś."`,
+        choices: [
+          { text: "Przepraszam, Jakub.", next: 1 },
+          { text: "Nie obchodzą mnie twoje zdanie.", next: 2 }
+        ]
+      },
+      {
+        text: `Jakub: "Może kiedyś zasłużysz na powrót, ale na razie nie licz na mnie."`,
+        choices: [
+          { text: "Spróbuję to naprawić.", next: 'end' },
+          { text: "Nie interesuje mnie to.", next: 'end' }
+        ]
+      },
+      {
+        text: `Jakub: "Trzymaj się, Bartek. I pamiętaj, nie każdy cwel dostaje drugą szansę."`,
+        choices: [
+          { text: "Dzięki, Jakub.", next: 'end' },
+          { text: "Cwel na zawsze.", next: 'end' }
+        ]
+      }
+    ]
+  },
 
-    function endGame(player, decyzja) {
-      const reakcje = [
-        `${player}: Twoje zagranie było jak troll w soloq – niepotrzebne i szkodliwe.`,
-        `${player}: Publiczne zdjęcie zgniłego banana już krąży po grupie.`,
-        `${player}: Dobra, dostajesz szansę... ale to twoje ostatnie życie.`
-      ];
-      game.innerHTML = `<h2>Koniec</h2><p>${reakcje[decyzja]}</p><p>Bartosz został rozliczony. Bananowe Banany znów są wolne od zdrady.</p>`;
-    }
+  Maja: {
+    intro: `Maja mówi: "Hej Bartek, słyszałam o twoich problemach. Może czas na nowy rozdział? Może randka?"`,
+    steps: [
+      {
+        text: `Maja: "Chcesz się spotkać i pokazać, że nie jesteś tylko cwelem?"`,
+        choices: [
+          { text: "Tak, spróbujmy.", next: 1 },
+          { text: "Nie, nie mam ochoty.", next: 2 }
+        ]
+      },
+      {
+        text: `Maja: "Super! Spotkajmy się i zobaczmy, czy coś z tego będzie."`,
+        choices: [
+          { text: "Jestem gotów.", next: 'end' },
+          { text: "Chyba się rozmyśliłem.", next: 'end' }
+        ]
+      },
+      {
+        text: `Maja: "Rozumiem. Może kiedy indziej."`,
+        choices: [
+          { text: "Może tak.", next: 'end' },
+          { text: "Do widzenia.", next: 'end' }
+        ]
+      }
+    ]
+  }
+};
 
-    startGame();
-  </script>
-</body>
-</html>
+let currentCharacter = "";
+let step = 0;
+
+function startGame(character) {
+  currentCharacter = character;
+  step = 0;
+  document.getElementById("character-choice").style.display = "none";
+  showText(characters[character].intro);
+  showChoices([
+    { text: "Kontynuuj", action: () => nextStep() },
+    { text: "Zakończ grę", action: endGame }
+  ]);
+}
+
+function nextStep() {
+  const charData = characters[currentCharacter];
