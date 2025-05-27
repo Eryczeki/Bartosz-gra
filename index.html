@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bananowa Afera: Zemsta</title>
   <style>
     body {
@@ -11,20 +11,22 @@
       padding: 20px;
     }
     #game {
-      max-width: 600px;
+      max-width: 700px;
       margin: auto;
     }
     button {
-      background-color: #333;
-      color: #f1f1f1;
-      padding: 10px;
-      margin: 5px 0;
+      background-color: #222;
+      color: #fff;
+      padding: 12px;
+      margin: 8px 0;
       border: none;
+      border-radius: 5px;
       cursor: pointer;
       width: 100%;
+      font-size: 1rem;
     }
     button:hover {
-      background-color: #555;
+      background-color: #444;
     }
   </style>
 </head>
@@ -35,133 +37,142 @@
     <div id="choices"></div>
   </div>
   <script>
-    const postacie = {
-      "Eryk": {
-        intro: "Byłeś kiedyś blisko z Bartkiem. Razem dominowaliście w Wild Rift, dopóki nie zdradził bananowych bananów. Dziś czas na konfrontację.",
-        choices: [
-          {
-            text: "Zaproś Bartka na ostatni mecz w Wild Rift... przegrany znika na zawsze.",
-            result: "Bartek odrzuca wyzwanie. Pisze: 'Już nie gram z frajerami'. To koniec waszej historii.",
-            end: true
-          },
-          {
-            text: "Napisz mu wiadomość: 'Zawiodłeś mnie gorzej niż AFK w rankedzie'.",
-            result: "Po chwili odpisał: 'Nie wiedziałem że to aż tak ważne...'. Ale już za późno.",
-            end: true
-          }
-        ]
-      },
-      "Fabian": {
-        intro: "Uczyłeś Bartka dyscypliny. Tworzyłeś mu jadłospisy i plany treningowe. Teraz został cieniem człowieka – i zdrajcą.",
-        choices: [
-          {
-            text: "Przypomnij mu jego pierwszy plan treningowy i powiedz, że stracił wszystko – nie tylko formę, ale i szacunek.",
-            result: "Nie odpisał. Ale widział. Cisza też potrafi boleć.",
-            end: true
-          },
-          {
-            text: "Zaproponuj mu spotkanie i test siły: jeśli przegra, musi wrócić do grupy na kolanach.",
-            result: "Przyjął wyzwanie. Spotkaliście się. Po 3 minutach zrezygnował, sapcząc jak dzik. Wygrałeś.",
-            end: true
-          }
-        ]
-      },
-      "Nikola": {
-        intro: "Bartek był ci kiedyś bliski. Ale zachował się jak największy gnój. Teraz wracasz po sprawiedliwość.",
-        choices: [
-          {
-            text: "Wyślij mu voice'a: 'Jesteś śmieciem, cwelu, zapamiętaj to'.",
-            result: "Odsłuchał. Odsłuchał dwa razy. Zablokował cię. Ale wiesz, że trafiło.",
-            end: true
-          },
-          {
-            text: "Dodaj jego nową dziewczynę na Insta. Polub wszystkie jej zdjęcia. Zrobione.",
-            result: "Wysłał ci wiadomość: 'Po co to robisz?'. Nie odpowiedziałaś.",
-            end: true
-          }
-        ]
-      },
-      "Ola": {
-        intro: "Nie znałaś Bartka aż tak dobrze. Ale zdrada boli wszystkich. Zwłaszcza bananowe banany.",
-        choices: [
-          {
-            text: "Napisz mu poemat o zdradzie... i zakończ go słowami: 'Jesteś zerem'.",
-            result: "Nie zrozumiał. Ale skopiował i wrzucił na story. Ludzie go wyśmiali. Cel osiągnięty.",
-            end: true
-          },
-          {
-            text: "Po prostu zablokuj go wszędzie i napisz na grupie: 'Zbanowany banan'.",
-            result: "Grupa śmiała się cały dzień. Czułaś się jak bohaterka.",
-            end: true
-          }
-        ]
-      },
-      "Jakub": {
-        intro: "Nie znałeś Bartka zbyt dobrze. Ale raz cwela, zawsze cwel. Takie rzeczy się wyczuwa.",
-        choices: [
-          {
-            text: "Zrób mema o nim i wrzuć na grupkę.",
-            result: "Mistrzostwo. Śmiech do łez. Nawet ci, co go lubili, się śmiali.",
-            end: true
-          },
-          {
-            text: "Zaproponuj mu 'wspólną aktywność'. Gdy przyjdzie, nie otwórz drzwi.",
-            result: "Stał pod blokiem 15 minut. Nagrał TikToka, że 'nie można ufać nikomu'. O ironio.",
-            end: true
-          }
-        ]
-      },
-      "Kot": {
-        intro: "Bartek zaczynał coś z tobą. Ale ciągnie się za nim paskudna historia. Czy warto?",
-        choices: [
-          {
-            text: "Daj mu szansę i zaproś na randkę... ale do baru, gdzie siedzi cała grupa bananów.",
-            result: "Atmosfera jak z horroru. Wyszedł po 3 minutach. Ty zostałaś. Oni cię pokochali.",
-            end: true
-          },
-          {
-            text: "Spytaj go wprost: 'Czy jesteś zdrajcą czy ofiarą?'.",
-            result: "Napisał długi elaborat. Nuda. Zostawiłaś go na 'read'.",
-            end: true
-          }
-        ]
-      }
+    const storyData = {
+      "Eryk": [
+        {
+          text: "Zaproponowałeś Bartkowi rewanż w Wild Rift – mecz o wszystko.",
+          result: "Bartek spanikował. Napisał, że odinstalował grę. Klasyczne uniki. Jeszcze chwila i zniknie z neta jak ostatni troll."
+        },
+        {
+          text: "Napisałeś mu wiadomość: 'Zawiodłeś mnie bardziej niż losowy duo z brązu'.",
+          result: "Bartek czytał wiadomość przez kilka minut. Ostatecznie wysłał emotkę klauna. Sam się ocenił."
+        },
+        {
+          text: "Opublikowałeś wspólny screen z rankedów z podpisem: 'Zdrada boli bardziej niż przegrana 0/15'.",
+          result: "Grupa bananów zareagowała falą wsparcia. Bartek nie odpowiedział. Wiesz, że widział."
+        }
+      ],
+      "Fabian": [
+        {
+          text: "Wysłałeś Bartkowi stary plan treningowy z notatką: 'Czas na trening charakteru'.",
+          result: "Nie zareagował. Widział. W sercu wiedział, że zmarnował nie tylko mięśnie."
+        },
+        {
+          text: "Napisałeś mu: 'Pamiętasz, jak mówiłem: ciało to świątynia? Ty zrobiłeś z siebie ruinę'.",
+          result: "Odpisał: 'Może i tak, ale przynajmniej mnie nie kontrolujecie'. A więc wiedział."
+        },
+        {
+          text: "Zrobiłeś grafikę z porównaniem jego formy 'przed zdradą' i 'po zdradzie'.",
+          result: "Virale się same zrobiły. Grupa bananów zaczęła tagować Bartka w komentarzach. Nikt nie zapomni."
+        }
+      ],
+      "Nikola": [
+        {
+          text: "Zostawiłaś mu wiadomość głosową: 'Zachowałeś się jak śmieć. Tyle mam do powiedzenia'.",
+          result: "Odsłuchał. Trzy razy. Zablokował cię. Trafiłaś."
+        },
+        {
+          text: "Polubiłaś wszystkie posty jego nowej 'koleżanki' i wysłałaś subtelne 'miśki'.",
+          result: "Zareagował w 10 minut. Napisał: 'Naprawdę musisz tak?'. Zostawiłaś go na 'read'."
+        },
+        {
+          text: "Wysłałaś mu selfie z podpisem: 'I tak jestem lepsza od twoich wyborów'.",
+          result: "Nie odpisał. Ale inni zaczęli komentować serduszka. Karma przyszła."
+        }
+      ],
+      "Ola": [
+        {
+          text: "Napisałaś na grupie bananów: 'Ten typ to nawet nie owoc. To zgniły liść'.",
+          result: "Grupa eksplodowała śmiechem. Bartek opuścił grupę bez słowa."
+        },
+        {
+          text: "Zrobiłaś TikToka z opisem 'Jak rozpoznać zdrajcę bananów'.",
+          result: "Viral. Dziewczyny pisały: 'Ten Bartek? Też mnie ghostował'. Potwierdzenie."
+        },
+        {
+          text: "Zorganizowałaś czat z całą grupą. Bez Bartka. Temat: 'Jak żyć lepiej bez niego'.",
+          result: "Atmosfera terapeutyczna. Wszyscy poczuli ulgę. Ty – satysfakcję."
+        }
+      ],
+      "Jakub": [
+        {
+          text: "Zrobiłeś mema: Bartek jako banan w koszu z podpisem 'Nadgnił'.",
+          result: "Mistrzostwo internetu. Grupa lajkowała, komentowała. Sztuka zemsty."
+        },
+        {
+          text: "Wysłałeś mu wiadomość: 'Ej, jesteś bardziej cwel niż WiFi na działce'.",
+          result: "Odpisał tylko 'XD'. Pokazał, że nie ma już nic. Nawet argumentu."
+        },
+        {
+          text: "Udawałeś, że chcesz pogadać. Gdy odpisał – wrzuciłeś screeny na grupkę.",
+          result: "Grupa była zachwycona. On – mniej. Znowu wyszedł na pajaca."
+        }
+      ],
+      "Kot": [
+        {
+          text: "Zaproponowałaś mu randkę w miejscu, gdzie siedziała cała grupa bananów.",
+          result: "Przyszedł. Zbladł. Wyszedł bez słowa. Ty zostałaś z bohaterami."
+        },
+        {
+          text: "Spytałaś go prosto w oczy: 'Co ty robisz ze swoim życiem?'.",
+          result: "Przez chwilę milczał. Potem powiedział: 'Nie wiem'. Zaczęłaś się śmiać. Naturalnie."
+        },
+        {
+          text: "Napisałaś mu, że nie jesteś dla niego – bo masz szacunek do siebie.",
+          result: "Zniknął z Messengera. W grupie zaczęli ci bić brawa. Słusznie."
+        }
+      ]
     };let currentCharacter = null;
+let currentIndex = 0;
 
 function startGame() {
+  currentCharacter = null;
+  currentIndex = 0;
   const storyDiv = document.getElementById("story");
   const choicesDiv = document.getElementById("choices");
   storyDiv.innerHTML = "<h2>Wybierz swoją postać:</h2>";
   choicesDiv.innerHTML = "";
-  Object.keys(postacie).forEach((name) => {
+  Object.keys(storyData).forEach((charName) => {
     const btn = document.createElement("button");
-    btn.textContent = name;
-    btn.onclick = () => beginStory(name);
+    btn.textContent = charName;
+    btn.onclick = () => beginStory(charName);
     choicesDiv.appendChild(btn);
   });
 }
 
 function beginStory(name) {
-  currentCharacter = postacie[name];
-  document.getElementById("story").innerHTML = `<p><strong>${name}</strong>: ${currentCharacter.intro}</p>`;
-  const choicesDiv = document.getElementById("choices");
-  choicesDiv.innerHTML = "";
-  currentCharacter.choices.forEach((choice) => {
-    const btn = document.createElement("button");
-    btn.textContent = choice.text;
-    btn.onclick = () => showResult(choice);
-    choicesDiv.appendChild(btn);
-  });
+  currentCharacter = name;
+  currentIndex = 0;
+  document.getElementById("story").innerHTML = `<p><strong>${name}</strong>: Twoja historia zaczyna się teraz...</p>`;
+  showNextChoice();
 }
 
-function showResult(choice) {
-  document.getElementById("story").innerHTML = `<p>${choice.result}</p>`;
+function showNextChoice() {
   const choicesDiv = document.getElementById("choices");
+  const storyDiv = document.getElementById("story");
   choicesDiv.innerHTML = "";
-  const restart = document.createElement("button");
-  restart.textContent = "Zagraj jeszcze raz";
-  restart.onclick = startGame;
-  choicesDiv.appendChild(restart);
+
+  if (currentIndex >= storyData[currentCharacter].length) {
+    const endText = document.createElement("p");
+    endText.textContent = "To koniec twojej historii. Ale zemsta bananów trwa dalej...";
+    storyDiv.appendChild(endText);
+
+    const restartBtn = document.createElement("button");
+    restartBtn.textContent = "Zagraj jeszcze raz";
+    restartBtn.onclick = startGame;
+    choicesDiv.appendChild(restartBtn);
+    return;
+  }
+
+  const step = storyData[currentCharacter][currentIndex];
+  const btn = document.createElement("button");
+  btn.textContent = step.text;
+  btn.onclick = () => {
+    storyDiv.innerHTML += `<p>${step.result}</p>`;
+    currentIndex++;
+    showNextChoice();
+  };
+  choicesDiv.appendChild(btn);
 }
 
 startGame();
