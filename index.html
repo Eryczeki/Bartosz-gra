@@ -1,157 +1,139 @@
-<!DOCTYPE html><html lang="pl">
+<!DOCTYPE html>
+<html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bananowa Afera: Zemsta</title>
+  <meta charset="UTF-8" />
+  <title>Zemsta Bananowych Bananów: Eryk</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #111;
+      font-family: Arial, sans-serif;
+      background-color: #1c1c1c;
       color: #f1f1f1;
       padding: 20px;
-    }
-    #game {
-      max-width: 700px;
+      max-width: 600px;
       margin: auto;
     }
-    button {
-      background-color: #222;
+    .choice-button {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #333;
       color: #fff;
-      padding: 12px;
-      margin: 8px 0;
       border: none;
-      border-radius: 5px;
       cursor: pointer;
-      width: 100%;
-      font-size: 1rem;
     }
-    button:hover {
-      background-color: #444;
-    }
-    .hidden {
-      display: none;
+    .choice-button:hover {
+      background-color: #555;
     }
   </style>
 </head>
 <body>
-  <div id="game">
-    <h1>Bananowa Afera: Zemsta</h1>
-    <div id="story"></div>
-    <div id="choices"></div>
-    <button onclick="activateChaos()" style="margin-top:20px">Nie klikaj tego przycisku</button>
-  </div>
+
+  <h1>Zemsta Bananowych Bananów</h1>
+  <h2>Postać: Eryk</h2>
+
+  <div id="game"></div>
+
   <script>
-    const storyData = {
-      "Eryk": [
-        { text: "Zaproponowałeś Bartkowi rewanż w Wild Rift – mecz o wszystko.", result: "Bartek spanikował. Napisał, że odinstalował grę. Klasyczne uniki." },
-        { text: "Napisałeś mu wiadomość: 'Zawiodłeś mnie bardziej niż losowy duo z brązu'.", result: "Odsłał klauna. Sam się ocenił." },
-        { text: "Opublikowałeś wspólny screen z podpisem: 'Zdrada boli bardziej niż przegrana 0/15'.", result: "Wszyscy go jechali. Zniknął na tydzień z neta." },
-        { text: "Wysłałeś screena z ostatniej wspólnej gry z opisem: 'Byłeś słaby w grze i w życiu'.", result: "Serio się obraził. Słabość potwierdzona." }
-      ],
-      "Fabian": [
-        { text: "Wysłałeś Bartkowi stary plan treningowy z notatką: 'Czas na trening charakteru'.", result: "Nie zareagował. Widział. Boli go prawda." },
-        { text: "Napisałeś mu: 'Ciało to świątynia? Ty zrobiłeś z siebie ruinę'.", result: "Zablokował cię. Słusznie się wstydzi." },
-        { text: "Zrobiłeś grafikę porównawczą 'przed' i 'po zdradzie'.", result: "Mistrz memów. Zmierzony, zważony, obśmiany." },
-        { text: "Wysłałeś mu nagranie z treningu: 'To dla tych, co nie zdradzają drużyny'.", result: "Odpisał: 'XD'. Nawet nie próbował się bronić." }
-      ],
-      "Nikola": [
-        { text: "Zostawiłaś mu wiadomość głosową: 'Zachowałeś się jak śmieć'.", result: "Odsłuchał 3 razy. Trafiłaś w punkt." },
-        { text: "Polubiłaś wszystkie posty jego nowej 'koleżanki'.", result: "Zareagował w 10 minut. Napisał 'musisz tak?'. Zostawiłaś go na 'read'." },
-        { text: "Wysłałaś mu selfie: 'Jestem lepsza od twoich wyborów'.", result: "Zamilkł. Świat to zobaczył." },
-        { text: "Na grupie rzuciłaś tylko: 'Nigdy więcej takich śmieci'.", result: "Wszyscy wiedzieli o kim mowa. On też." }
-      ],
-      "Ola": [
-        { text: "Napisałaś na grupie: 'To nawet nie owoc. To zgniły liść'.", result: "Rozbawiłaś wszystkich. Bartek opuścił czat." },
-        { text: "Zrobiłaś TikToka: 'Jak rozpoznać zdrajcę bananów'.", result: "Viral. Wszyscy wiedzieli, o kogo chodzi." },
-        { text: "Zorganizowałaś czat bez Bartka: 'Jak żyć lepiej bez zdrajcy?'.", result: "Pomogło. Wszyscy poczuli ulgę." },
-        { text: "Dodałaś go do listy 'Nie zapraszać nigdy'.", result: "Lista została przypięta na czacie. Koniec ery Bartka." }
-      ],
-      "Jakub": [
-        { text: "Zrobiłeś mema: Bartek jako banan w koszu.", result: "Kultowe. Nawet nie próbował riposty." },
-        { text: "Wysłałeś mu: 'Jesteś bardziej cwel niż WiFi na działce'.", result: "Brak odpowiedzi. Trafiony, zatopiony." },
-        { text: "Udawałeś, że chcesz pogadać. Potem wrzuciłeś screena na grupę.", result: "Legenda trollingu. Bartek uciekł z Messengera." },
-        { text: "Wysłałeś mu zdjęcie banana i tylko jedno słowo: 'TY'.", result: "Zablokował cię. Najlepsze podsumowanie." }
-      ],
-      "Kot": [
-        { text: "Zaproponowałaś mu randkę w miejscu, gdzie siedziała cała grupa bananów.", result: "Przyszedł. Zbladł. Zawrócił. Wszyscy widzieli." },
-        { text: "Spytałaś: 'Co ty robisz ze swoim życiem?'.", result: "'Nie wiem' – odpowiedział. Szczerze. Ale żałośnie." },
-        { text: "Napisałaś mu, że masz szacunek do siebie. On już nie.", result: "Zniknął z Messengera. Został ci szacunek i brawa." },
-        { text: "Wysłałaś mu wiadomość: 'Kot nie chodzi z cwelami'.", result: "Nie zareagował. Ale poczuł to w duszy." }
-      ],
-      "Bartek": [
-        { text: "Próbowałeś się odezwać do Eryka: 'Zagrajmy jeszcze raz...'.", result: "Odpisał: 'Zagram z kimś lojalnym'. Zabolało." },
-        { text: "Napisałeś do Nikoli: 'Wciąż o tobie myślę'.", result: "Zrobiła screena i wrzuciła na grupę. RIP." },
-        { text: "Poprosiłeś o powrót do grupy. Wysłali ci naklejkę śmietnika.", result: "Odpowiedź była jednoznaczna. Wróciłeś do samotności." }
-      ],
-      "Oliwia Wach": [
-        { text: "Zapytałaś Bartka: 'Po co ci to wszystko było?'.", result: "Powiedział: 'Bo mnie nie szanowali'. Ty już też nie szanujesz." },
-        { text: "Zostawiłaś go samego w kinie, udając, że zapomniałaś.", result: "Zasłużył. Cichy seans, ciche życie." },
-        { text: "Napisałaś: 'Chciałam ci pomóc, ale nie da się pomóc śmieciowi'.", result: "Zbanował cię. Po to tu przyszedł?" }
-      ],
-      "CHAOS": [
-        { text: "Wszyscy postanowili na raz napisać 'Jesteś bananem'.", result: "Bartka nie ma. Telefon eksplodował. Satysfakcja 999%." },
-        { text: "Bartosz próbuje założyć nową grupę: 'Ananasowi Ananasy'.", result: "Zero dołączeń. Świat pamięta zdradę." },
-        { text: "Grupa bananów ogłasza dzień śmiechu z Bartka.", result: "Nowe święto narodowe. Historia zatoczyła koło." }
-      ]
-    };let currentCharacter = null;
-let currentIndex = 0;
+    const gameContainer = document.getElementById("game");
 
-function startGame() {
-  currentCharacter = null;
-  currentIndex = 0;
-  const storyDiv = document.getElementById("story");
-  const choicesDiv = document.getElementById("choices");
-  storyDiv.innerHTML = "<h2>Wybierz swoją postać:</h2>";
-  choicesDiv.innerHTML = "";
-  Object.keys(storyData).forEach((charName) => {
-    const btn = document.createElement("button");
-    btn.textContent = charName;
-    btn.onclick = () => beginStory(charName);
-    choicesDiv.appendChild(btn);
-  });
-}
+    let state = {
+      chapter: 0,
+      lojalnosc: 0,
+      zemsta: 0,
+      chaos: 0
+    };
 
-function beginStory(name) {
-  currentCharacter = name;
-  currentIndex = 0;
-  document.getElementById("story").innerHTML = `<p><strong>${name}</strong>: Twoja historia zaczyna się teraz...</p>`;
-  showNextChoice();
-}
+    const chapters = [
+      {
+        text: `Rozdział 1: Zdrada  
+Eryk właśnie kończył grę w Wild Rift, gdy dostał wiadomość:  
+„Bartek odszedł do Oliwii.”  
+Bananowa zdrada stała się faktem.`,
+        choices: [
+          { text: "Wyłącz grę. Czas działać.", effect: { lojalnosc: 1 } },
+          { text: "Zrób z tego mema i wyślij Fabianowi.", effect: { chaos: 1 } },
+          { text: "Napisz Bartkowi: 'ty dzbanie'", effect: { zemsta: 1 } }
+        ]
+      },
+      {
+        text: `Rozdział 2: Plan  
+Eryk zaczyna knuć. W grupie szumi od teorii i emocji.`,
+        choices: [
+          { text: "Zaproś wszystkich na zebranie bananowe.", effect: { lojalnosc: 1 } },
+          { text: "Ustal z Fabianem plan kompromitacji Bartka.", effect: { zemsta: 1 } },
+          { text: "Przebierz się za banana i wbij do szkoły.", effect: { chaos: 1 } }
+        ]
+      },
+      {
+        text: `Rozdział 3: Konfrontacja  
+Spotykasz Bartka na korytarzu. Patrzy na Ciebie jakby nic się nie stało.`,
+        choices: [
+          { text: "„Zdradziłeś bananów. Nie ma powrotu.”", effect: { lojalnosc: 1 } },
+          { text: "„Cwelu.” — i rzucasz bananem.", effect: { zemsta: 1 } },
+          { text: "„Niech zgadnę — Oliwia to teraz Banana Queen?”", effect: { chaos: 1 } }
+        ]
+      },
+      {
+        text: `Rozdział 4: Finał  
+Twoje działania doprowadziły do kulminacji. Czas na konsekwencje.`,
+        choices: [
+          { text: "Zobacz zakończenie", effect: {} }
+        ]
+      }
+    ];
 
-function showNextChoice() {
-  const choicesDiv = document.getElementById("choices");
-  const storyDiv = document.getElementById("story");
-  choicesDiv.innerHTML = "";
+    function showChapter() {
+      if (state.chapter >= chapters.length) {
+        showEnding();
+        return;
+      }
 
-  if (currentIndex >= storyData[currentCharacter].length) {
-    const endText = document.createElement("p");
-    endText.textContent = "To koniec twojej historii. Ale zemsta bananów trwa dalej...";
-    storyDiv.appendChild(endText);
+      const chapter = chapters[state.chapter];
+      gameContainer.innerHTML = `<p>${chapter.text}</p>`;
 
-    const restartBtn = document.createElement("button");
-    restartBtn.textContent = "Zagraj jeszcze raz";
-    restartBtn.onclick = startGame;
-    choicesDiv.appendChild(restartBtn);
-    return;
-  }
+      chapter.choices.forEach((choice, index) => {
+        const button = document.createElement("button");
+        button.textContent = choice.text;
+        button.className = "choice-button";
+        button.onclick = () => {
+          applyEffects(choice.effect);
+          state.chapter++;
+          showChapter();
+        };
+        gameContainer.appendChild(button);
+      });
+    }
 
-  const step = storyData[currentCharacter][currentIndex];
-  const btn = document.createElement("button");
-  btn.textContent = step.text;
-  btn.onclick = () => {
-    storyDiv.innerHTML += `<p>${step.result}</p>`;
-    currentIndex++;
-    showNextChoice();
-  };
-  choicesDiv.appendChild(btn);
-}
+    function applyEffects(effects) {
+      state.lojalnosc += effects.lojalnosc || 0;
+      state.zemsta += effects.zemsta || 0;
+      state.chaos += effects.chaos || 0;
+    }
 
-function activateChaos() {
-  beginStory("CHAOS");
-}
+    function showEnding() {
+      let ending = "";
 
-startGame();
+      if (state.zemsta >= 2) {
+        ending = `Zakończenie: Zemsta  
+Bartka nie ma już w żadnej grupie.  
+Fabian wrzucił mu zdjęcie z siłowni z podpisem „Cwel Spotted”.  
+Bananowe banany świętują zwycięstwo.`;
+      } else if (state.chaos >= 2) {
+        ending = `Zakończenie: Chaos  
+W wyniku nieplanowanych wydarzeń grupa utworzyła sektę „Kościół Banana”.  
+Bartek został prorokiem przez przypadek.  
+Eryk... został DJ-em.`;
+      } else {
+        ending = `Zakończenie: Lojalność  
+Eryk zorganizował grupę, porozmawiali z Bartkiem i...  
+Bartka dalej nikt nie lubi, ale Bananowe Banany znów są silne.  
+Zgranie, memy i siłownia wróciły.`;
+      }
 
+      gameContainer.innerHTML = `<h2>${ending}</h2>`;
+    }
+
+    showChapter();
   </script>
 </body>
 </html>
