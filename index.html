@@ -1,332 +1,171 @@
 <!DOCTYPE html><html lang="pl">
 <head>
-<meta charset="UTF-8" />
-<title>Zdrada Bartosza - Rozbudowana Gra</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #fffbe6;
-    color: #333;
-    padding: 20px;
-    max-width: 800px;
-    margin: auto;
-  }
-  #game {
-    border: 2px solid #cc9900;
-    padding: 20px;
-    border-radius: 10px;
-    background-color: #ffffcc;
-  }
-  button {
-    background-color: #cc9900;
-    border: none;
-    padding: 10px 20px;
-    margin: 10px 5px 0 0;
-    color: white;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  button:hover {
-    background-color: #bb8800;
-  }
-  #character-choice button {
-    background-color: #666;
-  }
-  #character-choice button:hover {
-    background-color: #444;
-  }
-  #text {
-    margin-top: 15px;
-    min-height: 160px;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bananowa Afera: Zemsta</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #111;
+      color: #f1f1f1;
+      padding: 20px;
+    }
+    #game {
+      max-width: 600px;
+      margin: auto;
+    }
+    button {
+      background-color: #333;
+      color: #f1f1f1;
+      padding: 10px;
+      margin: 5px 0;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #555;
+    }
+  </style>
 </head>
 <body>
-<h1>Zdrada Bartosza - Rozbudowana Gra Tekstowa</h1>
-<div id="game">
-  <div id="character-choice">
-    <p>Wybierz postać, z której perspektywy chcesz zagrać:</p>
-    <button onclick="startGame('Eryk')">Eryk</button>
-    <button onclick="startGame('Fabian')">Fabian</button>
-    <button onclick="startGame('Nikola')">Nikola</button>
-    <button onclick="startGame('Ola')">Ola</button>
-    <button onclick="startGame('Jakub')">Jakub</button>
-    <button onclick="startGame('Kot')">Kot</button>
+  <div id="game">
+    <h1>Bananowa Afera: Zemsta</h1>
+    <div id="story"></div>
+    <div id="choices"></div>
   </div>
-  <div id="text"></div>
-  <div id="choices"></div>
-</div><script>
-const characters = {
-  Eryk: {
-    intro: `Eryk mówi: "Bartek? Ten cwel, co grał ze mną w Wild Rift i zdradził naszą ekipę. Nie zapomnę mu tego."`,
-    steps: [
-      {
-        text: `Pamiętasz jak razem graliśmy Wild Rift? A ty zamiast pomóc, to poszedłeś do Oliwii. Cwel!`,
+  <script>
+    const postacie = {
+      "Eryk": {
+        intro: "Byłeś kiedyś blisko z Bartkiem. Razem dominowaliście w Wild Rift, dopóki nie zdradził bananowych bananów. Dziś czas na konfrontację.",
         choices: [
-          { text: "Przepraszam, Eryk, to był błąd.", next: 1 },
-          { text: "Co z tego, mam nową ekipę.", next: 2 },
-          { text: "To nie była zdrada, po prostu zmieniłem priorytety.", next: 3 }
+          {
+            text: "Zaproś Bartka na ostatni mecz w Wild Rift... przegrany znika na zawsze.",
+            result: "Bartek odrzuca wyzwanie. Pisze: 'Już nie gram z frajerami'. To koniec waszej historii.",
+            end: true
+          },
+          {
+            text: "Napisz mu wiadomość: 'Zawiodłeś mnie gorzej niż AFK w rankedzie'.",
+            result: "Po chwili odpisał: 'Nie wiedziałem że to aż tak ważne...'. Ale już za późno.",
+            end: true
+          }
         ]
       },
-      {
-        text: `Eryk: "Może ci wybaczę, ale nie zapominaj – w Wild Rift trzeba mieć honor."`,
+      "Fabian": {
+        intro: "Uczyłeś Bartka dyscypliny. Tworzyłeś mu jadłospisy i plany treningowe. Teraz został cieniem człowieka – i zdrajcą.",
         choices: [
-          { text: "Obiecuję, że się poprawię.", next: 'end' },
-          { text: "Honor? Miałem to gdzieś.", next: 'end' },
-          { text: "Zagramy jeszcze razem?", next: 'end' }
+          {
+            text: "Przypomnij mu jego pierwszy plan treningowy i powiedz, że stracił wszystko – nie tylko formę, ale i szacunek.",
+            result: "Nie odpisał. Ale widział. Cisza też potrafi boleć.",
+            end: true
+          },
+          {
+            text: "Zaproponuj mu spotkanie i test siły: jeśli przegra, musi wrócić do grupy na kolanach.",
+            result: "Przyjął wyzwanie. Spotkaliście się. Po 3 minutach zrezygnował, sapcząc jak dzik. Wygrałeś.",
+            end: true
+          }
         ]
       },
-      {
-        text: `Eryk: "No to powodzenia z nową ekipą, Bartek. My trzymamy się swoich."`,
+      "Nikola": {
+        intro: "Bartek był ci kiedyś bliski. Ale zachował się jak największy gnój. Teraz wracasz po sprawiedliwość.",
         choices: [
-          { text: "Dzięki, Eryk.", next: 'end' },
-          { text: "Cwelu!", next: 'end' },
-          { text: "Zmienisz zdanie, zobaczysz.", next: 'end' }
+          {
+            text: "Wyślij mu voice'a: 'Jesteś śmieciem, cwelu, zapamiętaj to'.",
+            result: "Odsłuchał. Odsłuchał dwa razy. Zablokował cię. Ale wiesz, że trafiło.",
+            end: true
+          },
+          {
+            text: "Dodaj jego nową dziewczynę na Insta. Polub wszystkie jej zdjęcia. Zrobione.",
+            result: "Wysłał ci wiadomość: 'Po co to robisz?'. Nie odpowiedziałaś.",
+            end: true
+          }
         ]
       },
-      {
-        text: `Eryk: "Zmiana priorytetów nie oznacza porzucenia przyjaciół. Pomyśl o tym."`,
+      "Ola": {
+        intro: "Nie znałaś Bartka aż tak dobrze. Ale zdrada boli wszystkich. Zwłaszcza bananowe banany.",
         choices: [
-          { text: "Masz rację.", next: 'end' },
-          { text: "Nie muszę się tłumaczyć.", next: 'end' }
+          {
+            text: "Napisz mu poemat o zdradzie... i zakończ go słowami: 'Jesteś zerem'.",
+            result: "Nie zrozumiał. Ale skopiował i wrzucił na story. Ludzie go wyśmiali. Cel osiągnięty.",
+            end: true
+          },
+          {
+            text: "Po prostu zablokuj go wszędzie i napisz na grupie: 'Zbanowany banan'.",
+            result: "Grupa śmiała się cały dzień. Czułaś się jak bohaterka.",
+            end: true
+          }
+        ]
+      },
+      "Jakub": {
+        intro: "Nie znałeś Bartka zbyt dobrze. Ale raz cwela, zawsze cwel. Takie rzeczy się wyczuwa.",
+        choices: [
+          {
+            text: "Zrób mema o nim i wrzuć na grupkę.",
+            result: "Mistrzostwo. Śmiech do łez. Nawet ci, co go lubili, się śmiali.",
+            end: true
+          },
+          {
+            text: "Zaproponuj mu 'wspólną aktywność'. Gdy przyjdzie, nie otwórz drzwi.",
+            result: "Stał pod blokiem 15 minut. Nagrał TikToka, że 'nie można ufać nikomu'. O ironio.",
+            end: true
+          }
+        ]
+      },
+      "Kot": {
+        intro: "Bartek zaczynał coś z tobą. Ale ciągnie się za nim paskudna historia. Czy warto?",
+        choices: [
+          {
+            text: "Daj mu szansę i zaproś na randkę... ale do baru, gdzie siedzi cała grupa bananów.",
+            result: "Atmosfera jak z horroru. Wyszedł po 3 minutach. Ty zostałaś. Oni cię pokochali.",
+            end: true
+          },
+          {
+            text: "Spytaj go wprost: 'Czy jesteś zdrajcą czy ofiarą?'.",
+            result: "Napisał długi elaborat. Nuda. Zostawiłaś go na 'read'.",
+            end: true
+          }
         ]
       }
-    ]
-  },
-  Fabian: {
-    intro: `Fabian mówi: "Bartek, ty frajerze. Dawałem ci jadłospisy i treningi, a ty nas zdradziłeś. Żenada."`,
-    steps: [
-      {
-        text: `Fabian: "Masz w dupie treningi, a potem nas zawiodłeś. Jak ci teraz mięśnie?"`,
-        choices: [
-          { text: "Ćwiczę u nowej ekipy.", next: 1 },
-          { text: "Co mnie obchodzi ten cały sport?", next: 2 },
-          { text: "Chciałem po prostu odpocząć.", next: 3 }
-        ]
-      },
-      {
-        text: `Fabian: "No to przynajmniej próbuj, bo inaczej to tylko cwelem zostaniesz."`,
-        choices: [
-          { text: "Wiem, już się poprawiam.", next: 'end' },
-          { text: "Nie obchodzi mnie to, mam lepsze rzeczy do roboty.", next: 'end' },
-          { text: "Dzięki za rady, Fabian.", next: 'end' }
-        ]
-      },
-      {
-        text: `Fabian: "Daj znać, gdy będziesz gotów wrócić do treningów, Bartek."`,
-        choices: [
-          { text: "Może kiedyś.", next: 'end' },
-          { text: "Nigdy.", next: 'end' },
-          { text: "Zastanowię się.", next: 'end' }
-        ]
-      },
-      {
-        text: `Fabian: "Odpoczynek jest ważny, ale nie kosztem lojalności. Zastanów się nad tym."`,
-        choices: [
-          { text: "Masz rację.", next: 'end' },
-          { text: "Już postanowiłem.", next: 'end' }
-        ]
-      }
-    ]
-  },
-  Nikola: {
-    intro: `Nikola mówi: "Bartek... byłeś dla mnie okropny. Nie zapomnę, jak to się skończyło."`,
-    steps: [
-      {
-        text: `Nikola: "Zostawiłeś mnie i zdradziłeś naszą grupę. Jak mogłeś?"`,
-        choices: [
-          { text: "Nie chciałem cię skrzywdzić.", next: 1 },
-          { text: "Tak wyszło, bywa.", next: 2 },
-          { text: "To nie twoja sprawa.", next: 3 }
-        ]
-      },
-      {
-        text: `Nikola: "Zawsze było tylko twoje ego. Może to kara."`,
-        choices: [
-          { text: "Chcę się zmienić.", next: 'end' },
-          { text: "Mam to gdzieś.", next: 'end' }
-        ]
-      },
-      {
-        text: `Nikola: "Bez komentarza. Jesteś żałosny."`,
-        choices: [
-          { text: "Trudno.", next: 'end' }
-        ]
-      },
-      {
-        text: `Nikola: "Taki właśnie jesteś – odcinasz się, gdy jest trudno."`,
-        choices: [
-          { text: "Nie jestem taki.", next: 'end' },
-          { text: "Jestem jaki jestem.", next: 'end' }
-        ]
-      }
-    ]
-  },
-  Ola: {
-    intro: `Ola mówi: "Nie znam cię dobrze, ale słyszałam wystarczająco dużo. Cwel jak się patrzy."`,
-    steps: [
-      {
-        text: `Ola: "Jak można tak po prostu olać ekipę i polecieć do byłej?"`,
-        choices: [
-          { text: "Nie wiedziałem, że to źle.", next: 1 },
-          { text: "To moja sprawa.", next: 2 },
-          { text: "Wszyscy przesadzacie.", next: 3 }
-        ]
-      },
-      {
-        text: `Ola: "To wiedz na przyszłość – lojalność ma znaczenie."`,
-        choices: [
-          { text: "Zrozumiałem.", next: 'end' },
-          { text: "Nie obchodzi mnie to.", next: 'end' }
-        ]
-      },
-      {
-        text: `Ola: "A ja mam prawo mówić, co myślę. I uważam cię za frajera."`,
-        choices: [
-          { text: "Dzięki, Ola.", next: 'end' },
-          { text: "Miłego dnia...", next: 'end' }
-        ]
-      },
-      {
-        text: `Ola: "Kiedy wszyscy cię jebią, może warto się nad sobą zastanowić."`,
-        choices: [
-          { text: "Może masz rację.", next: 'end' },
-          { text: "To wasz problem.", next: 'end' }
-        ]
-      }
-    ]
-  },
-  Jakub: {
-    intro: `Jakub mówi: "W sumie cię nie znałem, ale jak wszyscy cię jebią, to coś musi być na rzeczy."`,
-    steps: [
-      {
-        text: `Jakub: "Nie wnikam, ale serio? Zdradzić ekipę przez laskę?"`,
-        choices: [
-          { text: "Nie myślałem o tym tak.", next: 1 },
-          { text: "Było warto.", next: 2 },
-          { text: "To złożone.", next: 3 }
-        ]
-      },
-      {
-        text: `Jakub: "No to teraz myśl, bo ja bym ci ręki nie podał."`,
-        choices: [
-          { text: "Rozumiem.", next: 'end' },
-          { text: "Nie zależy mi.", next: 'end' }
-        ]
-      },
-      {
-        text: `Jakub: "To niech ci będzie, ale nie wracaj do nas z płaczem."`,
-        choices: [
-          { text: "Nie wrócę.", next: 'end' },
-          { text: "Zobaczymy.", next: 'end' }
-        ]
-      },
-      {
-        text: `Jakub: "Złożone sprawy też mają proste konsekwencje. Zdrada to zdrada."`,
-        choices: [
-          { text: "To boli.", next: 'end' },
-          { text: "Dzięki za info.", next: 'end' }
-        ]
-      }
-    ]
-  },
-  Kot: {
-    intro: `Kot mówi: "Cześć Bartek. Może... chcesz się spotkać?"`,
-    steps: [
-      {
-        text: `Kot: "Wiem, co zrobiłeś, ale może dasz mi powód, by cię polubić."`,
-        choices: [
-          { text: "Postaram się.", next: 1 },
-          { text: "Nie jestem dobry w takie rzeczy.", next: 2 },
-          { text: "Nie szukam nikogo.", next: 3 }
-        ]
-      },
-      {
-        text: `Kot: "Miło to słyszeć. Może dasz się zaprosić na spacer?"`,
-        choices: [
-          { text: "Chętnie.", next: 'end' },
-          { text: "Zobaczymy.", next: 'end' }
-        ]
-      },
-      {
-        text: `Kot: "Nie musisz być idealny. Po prostu nie bądź dupkiem."`,
-        choices: [
-          { text: "Będę się starał.", next: 'end' },
-          { text: "Nie wiem, czy dam radę.", next: 'end' }
-        ]
-      },
-      {
-        text: `Kot: "Szkoda. Może kiedyś się jeszcze spotkamy."`,
-        choices: [
-          { text: "Może.", next: 'end' }
-        ]
-      }
-    ]
-  }
-};
+    };let currentCharacter = null;
 
-let currentCharacter = "";
-let step = 0;
-
-function startGame(character) {
-  currentCharacter = character;
-  step = 0;
-  document.getElementById("character-choice").style.display = "none";
-  showText(characters[character].intro);
-  showChoices([
-    { text: "Kontynuuj", action: () => nextStep() },
-    { text: "Zakończ grę", action: endGame }
-  ]);
-}
-
-function showText(text) {
-  document.getElementById("text").innerText = text;
-}
-
-function showChoices(choices) {
+function startGame() {
+  const storyDiv = document.getElementById("story");
   const choicesDiv = document.getElementById("choices");
+  storyDiv.innerHTML = "<h2>Wybierz swoją postać:</h2>";
   choicesDiv.innerHTML = "";
-  choices.forEach(choice => {
+  Object.keys(postacie).forEach((name) => {
     const btn = document.createElement("button");
-    btn.innerText = choice.text;
-    btn.onclick = choice.action;
+    btn.textContent = name;
+    btn.onclick = () => beginStory(name);
     choicesDiv.appendChild(btn);
   });
 }
 
-function nextStep(choiceIndex = null) {
-  const charData = characters[currentCharacter];
-  if (step === 0 && choiceIndex === null) {
-    step = 0;
-    showText(charData.steps[step].text);
-    showChoices(charData.steps[step].choices.map((c, i) => ({
-      text: c.text,
-      action: () => nextStep(i)
-    })));
-    return;
-  }
-
-  if (choiceIndex !== null) {
-    const nextStepIndex = charData.steps[step].choices[choiceIndex].next;
-    if (nextStepIndex === 'end') {
-      endGame();
-      return;
-    } else {
-      step = nextStepIndex;
-    }
-  }
-
-  showText(characters[currentCharacter].steps[step].text);
-  showChoices(characters[currentCharacter].steps[step].choices.map((c, i) => ({
-    text: c.text,
-    action: () => nextStep(i)
-  })));
+function beginStory(name) {
+  currentCharacter = postacie[name];
+  document.getElementById("story").innerHTML = `<p><strong>${name}</strong>: ${currentCharacter.intro}</p>`;
+  const choicesDiv = document.getElementById("choices");
+  choicesDiv.innerHTML = "";
+  currentCharacter.choices.forEach((choice) => {
+    const btn = document.createElement("button");
+    btn.textContent = choice.text;
+    btn.onclick = () => showResult(choice);
+    choicesDiv.appendChild(btn);
+  });
 }
 
-function endGame() {
-  showText("Koniec gry. Dzięki za granie!");
-  document.getElementById("choices").innerHTML = '<button onclick="location.reload()">Zagraj ponownie</button>';
+function showResult(choice) {
+  document.getElementById("story").innerHTML = `<p>${choice.result}</p>`;
+  const choicesDiv = document.getElementById("choices");
+  choicesDiv.innerHTML = "";
+  const restart = document.createElement("button");
+  restart.textContent = "Zagraj jeszcze raz";
+  restart.onclick = startGame;
+  choicesDiv.appendChild(restart);
 }
-</script></body>
+
+startGame();
+
+  </script>
+</body>
 </html>
