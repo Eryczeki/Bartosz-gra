@@ -1,157 +1,210 @@
-<!DOCTYPE html><html lang="pl">
+<!DOCTYPE html>
+<html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bananowe Banany - Gra</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #ffeccc;
-      padding: 20px;
-      color: #222;
-    }
-    .game-container {
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: #fff8dc;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    .choice-button {
-      display: block;
-      margin: 10px 0;
-      padding: 10px;
-      background-color: #ffcc00;
-      color: #000;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    .choice-button:hover {
-      background-color: #e6b800;
-    }
-    .hidden { display: none; }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Bananowe Banany - Gra</title>
+<style>
+  body {
+    background: #ffeb3b;
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+    padding: 20px;
+    margin: 0;
+  }
+  #startScreen {
+    margin-top: 100px;
+  }
+  h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #4caf50;
+  }
+  p {
+    font-size: 1.3em;
+    margin-bottom: 40px;
+  }
+  button {
+    background-color: #4caf50;
+    color: white;
+    font-size: 1.5em;
+    padding: 15px 40px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #388e3c;
+  }
+  #gameScreen {
+    display: none;
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px #333;
+    text-align: left;
+    color: black;
+  }
+  #dialogue {
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    min-height: 100px;
+  }
+  #choices button {
+    display: block;
+    width: 100%;
+    margin: 8px 0;
+    padding: 12px;
+    font-size: 1em;
+    border-radius: 8px;
+    border: 1px solid #4caf50;
+    background-color: #a5d6a7;
+    cursor: pointer;
+  }
+  #choices button:hover {
+    background-color: #81c784;
+  }
+</style>
 </head>
 <body>
-  <div class="game-container">
-    <h1>Bananowe Banany: Zdrada Bartosza</h1>
-    <div id="game"></div>
+
+  <div id="startScreen">
+    <h1>Bananowe Banany - Zdrada Bartosza</h1>
+    <p>Wybierz postać i rozpocznij grę!</p>
+    <button id="startBtn">Start</button>
   </div>
-  <script>
-    const gameData = {
-      intro: {
-        text: "Witaj w świecie Bananowych Bananów. Wybierz postać, w którą się wcielisz:",
-        choices: [
-          { text: "Eryk", next: "eryk_start" },
-          { text: "Fabian", next: "fabian_start" },
-          { text: "Jakub", next: "jakub_start" },
-          { text: "Nikola", next: "nikola_start" },
-          { text: "Ola", next: "ola_start" },
-          { text: "Kot", next: "kot_start" },
-          { text: "???", next: "locked", condition: () => unlockedCharacters.includes('Oliwia') }
-        ]
-      },
-      locked: {
-        text: "Jeszcze nie odblokowałeś tej postaci. Ukończ wszystkie zakończenia przynajmniej 3 postaci, by odblokować.",
-        choices: [
-          { text: "Powrót", next: "intro" }
-        ]
-      },
-      // Przykład sceny Eryka
-      eryk_start: {
-        text: "Jesteś Eryk, lider grupy. Kiedyś z Bartkiem grałeś w Wild Rift, ale on odszedł. Co robisz, gdy go spotykasz online?",
-        choices: [
-          { text: "Wyzywasz go w czacie gry", next: "eryk_wyzywasz" },
-          { text: "Piszesz ironicznie: 'hej BartiX!'
-", next: "eryk_ironia" },
-          { text: "Ignorujesz go, ale planujesz zemstę", next: "eryk_zemsta" }
-        ]
-      },
-      eryk_wyzywasz: {
-        text: "Bartek wyłącza czat. Ty czujesz lekką satysfakcję. Ale czy to wystarczy?",
-        choices: [
-          { text: "To koniec tej ścieżki (Zakończenie 1)", next: "intro" }
-        ]
-      },
-      eryk_ironia: {
-        text: "Bartek myśli, że chcesz pogadać. Pisze: 'co tam stary?'. Co odpowiadasz?",
-        choices: [
-          { text: "'Tam gdzie ty, to zdrada! Żegnaj bananie'", next: "eryk_koniec_ironia" },
-          { text: "'Nic, szukam starych znajomości' (Wybaczenie?)", next: "eryk_przebaczenie" }
-        ]
-      },
-      eryk_koniec_ironia: {
-        text: "Zamknąłeś temat raz na zawsze. Eryk nigdy nie zapomina.",
-        choices: [
-          { text: "Zakończenie 2 - Sroga riposta", next: "intro" }
-        ]
-      },
-      eryk_przebaczenie: {
-        text: "Rozmawiacie jeszcze chwilę. Może to początek nowego rozdziału?",
-        choices: [
-          { text: "Zakończenie 3 - Potencjalne wybaczenie", next: "intro", unlock: 'Oliwia' }
-        ]
-      },
-      eryk_zemsta: {
-        text: "Zaczynasz pisać skrypt gry o Bartku. To się nie skończy dobrze... dla niego.",
-        choices: [
-          { text: "Zakończenie 4 - Twórca losu", next: "intro" }
-        ]
-      },// Kolejne postacie będą dodane tutaj (Fabian, Jakub, itd.)
 
-  oliwia_start: {
-    text: "Jesteś Oliwia. Czasem lubisz wypić Tigerka, ale Bartek to inny kaliber. Jak reagujesz na jego wiadomość 'hej'?",
-    choices: [
-      { text: "'Nie jesteś już na moim radarze, Bartoszu'", next: "oliwia_ignore" },
-      { text: "'Nie poznajesz ludzi po nicku? Bo ja po zdradzie już tak'", next: "oliwia_riposta" },
-      { text: "Wysyłasz mu sticker banana i blokujesz", next: "oliwia_blokada" }
-    ]
-  },
-  oliwia_ignore: {
-    text: "Milczenie to najlepszy krzyk. Bartek nigdy nie dostał odpowiedzi.",
-    choices: [
-      { text: "Zakończenie - Cisza bananowa", next: "intro" }
-    ]
-  },
-  oliwia_riposta: {
-    text: "Jego ego zostało rozgniecione jak banan pod tramwajem. Nie odezwał się więcej.",
-    choices: [
-      { text: "Zakończenie - Banana Slam", next: "intro" }
-    ]
-  },
-  oliwia_blokada: {
-    text: "Sticker poszedł, blok poszedł, humor poprawiony.",
-    choices: [
-      { text: "Zakończenie - Sticker Strike", next: "intro" }
-    ]
+  <div id="gameScreen">
+    <div id="dialogue"></div>
+    <div id="choices"></div>
+  </div>
+
+<script>
+  const startBtn = document.getElementById('startBtn');
+  const startScreen = document.getElementById('startScreen');
+  const gameScreen = document.getElementById('gameScreen');
+  const dialogueEl = document.getElementById('dialogue');
+  const choicesEl = document.getElementById('choices');
+
+  // DANE POSTACI I DIALOGÓW - uproszczone przykłady do rozbudowy
+  const characters = {
+    eryk: {
+      name: "Eryk",
+      intro: "Eryk: Grałem z Bartkiem w Wild Rift i nadal nie mogę mu wybaczyć zdrady.",
+      dialogues: [
+        {
+          text: "Jak chcesz podejść do Bartka?",
+          choices: [
+            { text: "Zbesztaj go za zdradę", points: { eryk: 1 } },
+            { text: "Spróbuj zrozumieć co się stało", points: { eryk: 0 } },
+            { text: "Zignoruj i odejdź", points: { eryk: -1 } }
+          ]
+        },
+        {
+          text: "Eryk kontynuuje rozmowę: 'Nie mogę uwierzyć, że nas tak wystawił!'",
+          choices: [
+            { text: "Masz rację, Bartek to cwel.", points: { eryk: 1 } },
+            { text: "Może coś mu się stało?", points: { eryk: 0 } },
+            { text: "Trzeba go olać i iść dalej.", points: { eryk: -1 } }
+          ]
+        }
+      ]
+    },
+    fabian: {
+      name: "Fabian",
+      intro: "Fabian: Zdrada Bartka? Nie miałbym na to czasu, cwelu.",
+      dialogues: [
+        {
+          text: "Fabian mówi: 'Miałem mu dawać jadłospisy i treningi, a on...'",
+          choices: [
+            { text: "Krytykuj go za brak szacunku", points: { fabian: 1 } },
+            { text: "Spróbuj usprawiedliwić", points: { fabian: 0 } },
+            { text: "Zignoruj temat", points: { fabian: -1 } }
+          ]
+        },
+        {
+          text: "Fabian: 'Nie mam dla niego litości, zdradził grupę.'",
+          choices: [
+            { text: "Zgadzasz się z Fabianem", points: { fabian: 1 } },
+            { text: "Mówisz, że każdy zasługuje na szansę", points: { fabian: 0 } },
+            { text: "Mówisz, że to tylko gra", points: { fabian: -1 } }
+          ]
+        }
+      ]
+    },
+    // Dodaj pozostałe postacie analogicznie
+  };
+
+  let currentCharacter = null;
+  let currentDialogueIndex = 0;
+  let points = {};
+
+  // Funkcja startowa gry - pokazuje wybór postaci
+  function showCharacterSelection() {
+    dialogueEl.innerHTML = "<h2>Wybierz swoją postać:</h2>";
+    choicesEl.innerHTML = "";
+
+    for (const key in characters) {
+      const btn = document.createElement('button');
+      btn.textContent = characters[key].name;
+      btn.onclick = () => {
+        currentCharacter = characters[key];
+        currentDialogueIndex = 0;
+        points = { eryk: 0, fabian: 0 }; // Tutaj rozszerz do wszystkich postaci
+        startGame();
+      };
+      choicesEl.appendChild(btn);
+    }
   }
-};
 
-let unlockedCharacters = [];
-
-function renderScene(sceneKey) {
-  const scene = gameData[sceneKey];
-  const gameDiv = document.getElementById("game");
-  gameDiv.innerHTML = `<p>${scene.text}</p>`;
-  scene.choices.forEach(choice => {
-    if (choice.condition && !choice.condition()) return;
-    const btn = document.createElement("button");
-    btn.className = "choice-button";
-    btn.textContent = choice.text;
-    btn.onclick = () => {
-      if (choice.unlock && !unlockedCharacters.includes(choice.unlock)) {
-        unlockedCharacters.push(choice.unlock);
-      }
-      renderScene(choice.next);
+  // Funkcja startuje dialogi danej postaci
+  function startGame() {
+    dialogueEl.textContent = currentCharacter.intro;
+    choicesEl.innerHTML = `<button id="nextBtn">Dalej</button>`;
+    document.getElementById('nextBtn').onclick = () => {
+      showDialogue(currentDialogueIndex);
     };
-    gameDiv.appendChild(btn);
+  }
+
+  // Pokazuje dialog i wybory
+  function showDialogue(index) {
+    if (index >= currentCharacter.dialogues.length) {
+      endGame();
+      return;
+    }
+    const dialogue = currentCharacter.dialogues[index];
+    dialogueEl.textContent = dialogue.text;
+    choicesEl.innerHTML = "";
+
+    dialogue.choices.forEach((choice, i) => {
+      const btn = document.createElement('button');
+      btn.textContent = choice.text;
+      btn.onclick = () => {
+        for (const p in choice.points) {
+          points[p] = (points[p] || 0) + choice.points[p];
+        }
+        currentDialogueIndex++;
+        showDialogue(currentDialogueIndex);
+      };
+      choicesEl.appendChild(btn);
+    });
+  }
+
+  // Zakończenie gry (na razie proste)
+  function endGame() {
+    dialogueEl.innerHTML = `<h2>Koniec gry!</h2><p>Dzięki za granie.</p>`;
+    choicesEl.innerHTML = `<button onclick="showCharacterSelection()">Zagraj ponownie</button>`;
+  }
+
+  // Start gry po kliknięciu przycisku
+  startBtn.addEventListener('click', () => {
+    startScreen.style.display = 'none';
+    gameScreen.style.display = 'block';
+    showCharacterSelection();
   });
-}
 
-renderScene("intro");
-
-  </script>
+</script>
 </body>
 </html>
