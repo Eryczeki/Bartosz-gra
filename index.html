@@ -2,138 +2,100 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8" />
-  <title>Zemsta Bananowych Bananów: Eryk</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zdrada Bartosza</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #1c1c1c;
+      background-color: #111;
       color: #f1f1f1;
+      font-family: Arial, sans-serif;
       padding: 20px;
-      max-width: 600px;
-      margin: auto;
     }
-    .choice-button {
-      display: block;
+    .hidden { display: none; }
+    button {
       margin: 10px 0;
-      padding: 10px;
-      background-color: #333;
-      color: #fff;
-      border: none;
+      padding: 10px 20px;
+      background: #222;
+      border: 1px solid #555;
+      color: white;
       cursor: pointer;
     }
-    .choice-button:hover {
-      background-color: #555;
+    .dialogue {
+      margin: 20px 0;
     }
   </style>
 </head>
 <body>
-
-  <h1>Zemsta Bananowych Bananów</h1>
-  <h2>Postać: Eryk</h2>
-
-  <div id="game"></div>
-
+  <h1>Zdrada Bartosza</h1>
+  <p>Wybierz postać:</p>
+  <div id="character-select">
+    <button onclick="startStory('eryk')">Eryk</button>
+    <button onclick="startStory('fabian')">Fabian</button>
+    <button onclick="startStory('jakub')">Jakub</button>
+  </div>
+  <div id="story" class="hidden">
+    <div class="dialogue" id="dialogue"></div>
+    <div id="choices"></div>
+  </div>
   <script>
-    const gameContainer = document.getElementById("game");
-
-    let state = {
-      chapter: 0,
-      lojalnosc: 0,
-      zemsta: 0,
-      chaos: 0
+    const stories = {
+      eryk: [
+        { text: "Zobaczyłeś Bartka online w Wild Rift.", choices: ["Napisz do niego", "Zignoruj go"] },
+        { text: "Napisałeś: 'Siema cwelu, znowu grasz z jakąś Oliwią?'", choices: ["Bartku, nie masz wstydu", "Jeszcze grasz supporta? Typowe."] },
+        { text: "Bartek nie odpowiada. W sumie dobrze, mniej raka na czacie." }
+      ],
+      fabian: [
+        { text: "Dostałeś powiadomienie, że Bartek kupił Dzik energetyka.", choices: ["Wyśmiej go", "Pokaż kolegom"] },
+        { text: "Mówisz: 'Typ od diet a pije syf. XD'", choices: ["Nie szkoda mi go", "Nie mam czasu na takich"] },
+        { text: "Kończysz rozmowę, idziesz robić przysiady i jeść białko." }
+      ],
+      jakub: [
+        { text: "Ktoś mówi ci, że Bartek znów gada bzdury na temat bananów.", choices: ["Wyśmiej go", "Zignoruj"] },
+        { text: "'Typa nawet nie znam, ale jak wszyscy go jebią to coś znaczy.'", choices: ["Wyślę mu mema", "Zablokuję go"] },
+        { text: "Odpalasz piwko i scrollujesz TikToka. Zasłużone zwycięstwo." }
+      ]
     };
 
-    const chapters = [
-      {
-        text: `Rozdział 1: Zdrada  
-Eryk właśnie kończył grę w Wild Rift, gdy dostał wiadomość:  
-„Bartek odszedł do Oliwii.”  
-Bananowa zdrada stała się faktem.`,
-        choices: [
-          { text: "Wyłącz grę. Czas działać.", effect: { lojalnosc: 1 } },
-          { text: "Zrób z tego mema i wyślij Fabianowi.", effect: { chaos: 1 } },
-          { text: "Napisz Bartkowi: 'ty dzbanie'", effect: { zemsta: 1 } }
-        ]
-      },
-      {
-        text: `Rozdział 2: Plan  
-Eryk zaczyna knuć. W grupie szumi od teorii i emocji.`,
-        choices: [
-          { text: "Zaproś wszystkich na zebranie bananowe.", effect: { lojalnosc: 1 } },
-          { text: "Ustal z Fabianem plan kompromitacji Bartka.", effect: { zemsta: 1 } },
-          { text: "Przebierz się za banana i wbij do szkoły.", effect: { chaos: 1 } }
-        ]
-      },
-      {
-        text: `Rozdział 3: Konfrontacja  
-Spotykasz Bartka na korytarzu. Patrzy na Ciebie jakby nic się nie stało.`,
-        choices: [
-          { text: "„Zdradziłeś bananów. Nie ma powrotu.”", effect: { lojalnosc: 1 } },
-          { text: "„Cwelu.” — i rzucasz bananem.", effect: { zemsta: 1 } },
-          { text: "„Niech zgadnę — Oliwia to teraz Banana Queen?”", effect: { chaos: 1 } }
-        ]
-      },
-      {
-        text: `Rozdział 4: Finał  
-Twoje działania doprowadziły do kulminacji. Czas na konsekwencje.`,
-        choices: [
-          { text: "Zobacz zakończenie", effect: {} }
-        ]
-      }
-    ];
+    let currentStory = [];
+    let currentIndex = 0;
 
-    function showChapter() {
-      if (state.chapter >= chapters.length) {
-        showEnding();
-        return;
-      }
-
-      const chapter = chapters[state.chapter];
-      gameContainer.innerHTML = `<p>${chapter.text}</p>`;
-
-      chapter.choices.forEach((choice, index) => {
-        const button = document.createElement("button");
-        button.textContent = choice.text;
-        button.className = "choice-button";
-        button.onclick = () => {
-          applyEffects(choice.effect);
-          state.chapter++;
-          showChapter();
-        };
-        gameContainer.appendChild(button);
-      });
+    function startStory(character) {
+      currentStory = stories[character];
+      currentIndex = 0;
+      document.getElementById("character-select").classList.add("hidden");
+      document.getElementById("story").classList.remove("hidden");
+      showDialogue();
     }
 
-    function applyEffects(effects) {
-      state.lojalnosc += effects.lojalnosc || 0;
-      state.zemsta += effects.zemsta || 0;
-      state.chaos += effects.chaos || 0;
-    }
+    function showDialogue() {
+      const dialogue = currentStory[currentIndex];
+      document.getElementById("dialogue").innerText = dialogue.text;
+      const choicesDiv = document.getElementById("choices");
+      choicesDiv.innerHTML = "";
 
-    function showEnding() {
-      let ending = "";
-
-      if (state.zemsta >= 2) {
-        ending = `Zakończenie: Zemsta  
-Bartka nie ma już w żadnej grupie.  
-Fabian wrzucił mu zdjęcie z siłowni z podpisem „Cwel Spotted”.  
-Bananowe banany świętują zwycięstwo.`;
-      } else if (state.chaos >= 2) {
-        ending = `Zakończenie: Chaos  
-W wyniku nieplanowanych wydarzeń grupa utworzyła sektę „Kościół Banana”.  
-Bartek został prorokiem przez przypadek.  
-Eryk... został DJ-em.`;
+      if (dialogue.choices) {
+        dialogue.choices.forEach((choice) => {
+          const btn = document.createElement("button");
+          btn.innerText = choice;
+          btn.onclick = () => {
+            currentIndex++;
+            if (currentIndex < currentStory.length) {
+              showDialogue();
+            } else {
+              endStory();
+            }
+          };
+          choicesDiv.appendChild(btn);
+        });
       } else {
-        ending = `Zakończenie: Lojalność  
-Eryk zorganizował grupę, porozmawiali z Bartkiem i...  
-Bartka dalej nikt nie lubi, ale Bananowe Banany znów są silne.  
-Zgranie, memy i siłownia wróciły.`;
+        endStory();
       }
-
-      gameContainer.innerHTML = `<h2>${ending}</h2>`;
     }
 
-    showChapter();
+    function endStory() {
+      document.getElementById("dialogue").innerText = "Koniec tej historii.";
+      document.getElementById("choices").innerHTML = "<button onclick='location.reload()'>Zagraj ponownie</button>";
+    }
   </script>
 </body>
 </html>
