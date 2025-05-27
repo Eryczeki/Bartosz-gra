@@ -28,6 +28,9 @@
     button:hover {
       background-color: #444;
     }
+    .hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -35,92 +38,60 @@
     <h1>Bananowa Afera: Zemsta</h1>
     <div id="story"></div>
     <div id="choices"></div>
+    <button onclick="activateChaos()" style="margin-top:20px">Nie klikaj tego przycisku</button>
   </div>
   <script>
     const storyData = {
       "Eryk": [
-        {
-          text: "Zaproponowałeś Bartkowi rewanż w Wild Rift – mecz o wszystko.",
-          result: "Bartek spanikował. Napisał, że odinstalował grę. Klasyczne uniki. Jeszcze chwila i zniknie z neta jak ostatni troll."
-        },
-        {
-          text: "Napisałeś mu wiadomość: 'Zawiodłeś mnie bardziej niż losowy duo z brązu'.",
-          result: "Bartek czytał wiadomość przez kilka minut. Ostatecznie wysłał emotkę klauna. Sam się ocenił."
-        },
-        {
-          text: "Opublikowałeś wspólny screen z rankedów z podpisem: 'Zdrada boli bardziej niż przegrana 0/15'.",
-          result: "Grupa bananów zareagowała falą wsparcia. Bartek nie odpowiedział. Wiesz, że widział."
-        }
+        { text: "Zaproponowałeś Bartkowi rewanż w Wild Rift – mecz o wszystko.", result: "Bartek spanikował. Napisał, że odinstalował grę. Klasyczne uniki." },
+        { text: "Napisałeś mu wiadomość: 'Zawiodłeś mnie bardziej niż losowy duo z brązu'.", result: "Odsłał klauna. Sam się ocenił." },
+        { text: "Opublikowałeś wspólny screen z podpisem: 'Zdrada boli bardziej niż przegrana 0/15'.", result: "Wszyscy go jechali. Zniknął na tydzień z neta." },
+        { text: "Wysłałeś screena z ostatniej wspólnej gry z opisem: 'Byłeś słaby w grze i w życiu'.", result: "Serio się obraził. Słabość potwierdzona." }
       ],
       "Fabian": [
-        {
-          text: "Wysłałeś Bartkowi stary plan treningowy z notatką: 'Czas na trening charakteru'.",
-          result: "Nie zareagował. Widział. W sercu wiedział, że zmarnował nie tylko mięśnie."
-        },
-        {
-          text: "Napisałeś mu: 'Pamiętasz, jak mówiłem: ciało to świątynia? Ty zrobiłeś z siebie ruinę'.",
-          result: "Odpisał: 'Może i tak, ale przynajmniej mnie nie kontrolujecie'. A więc wiedział."
-        },
-        {
-          text: "Zrobiłeś grafikę z porównaniem jego formy 'przed zdradą' i 'po zdradzie'.",
-          result: "Virale się same zrobiły. Grupa bananów zaczęła tagować Bartka w komentarzach. Nikt nie zapomni."
-        }
+        { text: "Wysłałeś Bartkowi stary plan treningowy z notatką: 'Czas na trening charakteru'.", result: "Nie zareagował. Widział. Boli go prawda." },
+        { text: "Napisałeś mu: 'Ciało to świątynia? Ty zrobiłeś z siebie ruinę'.", result: "Zablokował cię. Słusznie się wstydzi." },
+        { text: "Zrobiłeś grafikę porównawczą 'przed' i 'po zdradzie'.", result: "Mistrz memów. Zmierzony, zważony, obśmiany." },
+        { text: "Wysłałeś mu nagranie z treningu: 'To dla tych, co nie zdradzają drużyny'.", result: "Odpisał: 'XD'. Nawet nie próbował się bronić." }
       ],
       "Nikola": [
-        {
-          text: "Zostawiłaś mu wiadomość głosową: 'Zachowałeś się jak śmieć. Tyle mam do powiedzenia'.",
-          result: "Odsłuchał. Trzy razy. Zablokował cię. Trafiłaś."
-        },
-        {
-          text: "Polubiłaś wszystkie posty jego nowej 'koleżanki' i wysłałaś subtelne 'miśki'.",
-          result: "Zareagował w 10 minut. Napisał: 'Naprawdę musisz tak?'. Zostawiłaś go na 'read'."
-        },
-        {
-          text: "Wysłałaś mu selfie z podpisem: 'I tak jestem lepsza od twoich wyborów'.",
-          result: "Nie odpisał. Ale inni zaczęli komentować serduszka. Karma przyszła."
-        }
+        { text: "Zostawiłaś mu wiadomość głosową: 'Zachowałeś się jak śmieć'.", result: "Odsłuchał 3 razy. Trafiłaś w punkt." },
+        { text: "Polubiłaś wszystkie posty jego nowej 'koleżanki'.", result: "Zareagował w 10 minut. Napisał 'musisz tak?'. Zostawiłaś go na 'read'." },
+        { text: "Wysłałaś mu selfie: 'Jestem lepsza od twoich wyborów'.", result: "Zamilkł. Świat to zobaczył." },
+        { text: "Na grupie rzuciłaś tylko: 'Nigdy więcej takich śmieci'.", result: "Wszyscy wiedzieli o kim mowa. On też." }
       ],
       "Ola": [
-        {
-          text: "Napisałaś na grupie bananów: 'Ten typ to nawet nie owoc. To zgniły liść'.",
-          result: "Grupa eksplodowała śmiechem. Bartek opuścił grupę bez słowa."
-        },
-        {
-          text: "Zrobiłaś TikToka z opisem 'Jak rozpoznać zdrajcę bananów'.",
-          result: "Viral. Dziewczyny pisały: 'Ten Bartek? Też mnie ghostował'. Potwierdzenie."
-        },
-        {
-          text: "Zorganizowałaś czat z całą grupą. Bez Bartka. Temat: 'Jak żyć lepiej bez niego'.",
-          result: "Atmosfera terapeutyczna. Wszyscy poczuli ulgę. Ty – satysfakcję."
-        }
+        { text: "Napisałaś na grupie: 'To nawet nie owoc. To zgniły liść'.", result: "Rozbawiłaś wszystkich. Bartek opuścił czat." },
+        { text: "Zrobiłaś TikToka: 'Jak rozpoznać zdrajcę bananów'.", result: "Viral. Wszyscy wiedzieli, o kogo chodzi." },
+        { text: "Zorganizowałaś czat bez Bartka: 'Jak żyć lepiej bez zdrajcy?'.", result: "Pomogło. Wszyscy poczuli ulgę." },
+        { text: "Dodałaś go do listy 'Nie zapraszać nigdy'.", result: "Lista została przypięta na czacie. Koniec ery Bartka." }
       ],
       "Jakub": [
-        {
-          text: "Zrobiłeś mema: Bartek jako banan w koszu z podpisem 'Nadgnił'.",
-          result: "Mistrzostwo internetu. Grupa lajkowała, komentowała. Sztuka zemsty."
-        },
-        {
-          text: "Wysłałeś mu wiadomość: 'Ej, jesteś bardziej cwel niż WiFi na działce'.",
-          result: "Odpisał tylko 'XD'. Pokazał, że nie ma już nic. Nawet argumentu."
-        },
-        {
-          text: "Udawałeś, że chcesz pogadać. Gdy odpisał – wrzuciłeś screeny na grupkę.",
-          result: "Grupa była zachwycona. On – mniej. Znowu wyszedł na pajaca."
-        }
+        { text: "Zrobiłeś mema: Bartek jako banan w koszu.", result: "Kultowe. Nawet nie próbował riposty." },
+        { text: "Wysłałeś mu: 'Jesteś bardziej cwel niż WiFi na działce'.", result: "Brak odpowiedzi. Trafiony, zatopiony." },
+        { text: "Udawałeś, że chcesz pogadać. Potem wrzuciłeś screena na grupę.", result: "Legenda trollingu. Bartek uciekł z Messengera." },
+        { text: "Wysłałeś mu zdjęcie banana i tylko jedno słowo: 'TY'.", result: "Zablokował cię. Najlepsze podsumowanie." }
       ],
       "Kot": [
-        {
-          text: "Zaproponowałaś mu randkę w miejscu, gdzie siedziała cała grupa bananów.",
-          result: "Przyszedł. Zbladł. Wyszedł bez słowa. Ty zostałaś z bohaterami."
-        },
-        {
-          text: "Spytałaś go prosto w oczy: 'Co ty robisz ze swoim życiem?'.",
-          result: "Przez chwilę milczał. Potem powiedział: 'Nie wiem'. Zaczęłaś się śmiać. Naturalnie."
-        },
-        {
-          text: "Napisałaś mu, że nie jesteś dla niego – bo masz szacunek do siebie.",
-          result: "Zniknął z Messengera. W grupie zaczęli ci bić brawa. Słusznie."
-        }
+        { text: "Zaproponowałaś mu randkę w miejscu, gdzie siedziała cała grupa bananów.", result: "Przyszedł. Zbladł. Zawrócił. Wszyscy widzieli." },
+        { text: "Spytałaś: 'Co ty robisz ze swoim życiem?'.", result: "'Nie wiem' – odpowiedział. Szczerze. Ale żałośnie." },
+        { text: "Napisałaś mu, że masz szacunek do siebie. On już nie.", result: "Zniknął z Messengera. Został ci szacunek i brawa." },
+        { text: "Wysłałaś mu wiadomość: 'Kot nie chodzi z cwelami'.", result: "Nie zareagował. Ale poczuł to w duszy." }
+      ],
+      "Bartek": [
+        { text: "Próbowałeś się odezwać do Eryka: 'Zagrajmy jeszcze raz...'.", result: "Odpisał: 'Zagram z kimś lojalnym'. Zabolało." },
+        { text: "Napisałeś do Nikoli: 'Wciąż o tobie myślę'.", result: "Zrobiła screena i wrzuciła na grupę. RIP." },
+        { text: "Poprosiłeś o powrót do grupy. Wysłali ci naklejkę śmietnika.", result: "Odpowiedź była jednoznaczna. Wróciłeś do samotności." }
+      ],
+      "Oliwia Wach": [
+        { text: "Zapytałaś Bartka: 'Po co ci to wszystko było?'.", result: "Powiedział: 'Bo mnie nie szanowali'. Ty już też nie szanujesz." },
+        { text: "Zostawiłaś go samego w kinie, udając, że zapomniałaś.", result: "Zasłużył. Cichy seans, ciche życie." },
+        { text: "Napisałaś: 'Chciałam ci pomóc, ale nie da się pomóc śmieciowi'.", result: "Zbanował cię. Po to tu przyszedł?" }
+      ],
+      "CHAOS": [
+        { text: "Wszyscy postanowili na raz napisać 'Jesteś bananem'.", result: "Bartka nie ma. Telefon eksplodował. Satysfakcja 999%." },
+        { text: "Bartosz próbuje założyć nową grupę: 'Ananasowi Ananasy'.", result: "Zero dołączeń. Świat pamięta zdradę." },
+        { text: "Grupa bananów ogłasza dzień śmiechu z Bartka.", result: "Nowe święto narodowe. Historia zatoczyła koło." }
       ]
     };let currentCharacter = null;
 let currentIndex = 0;
@@ -173,6 +144,10 @@ function showNextChoice() {
     showNextChoice();
   };
   choicesDiv.appendChild(btn);
+}
+
+function activateChaos() {
+  beginStory("CHAOS");
 }
 
 startGame();
