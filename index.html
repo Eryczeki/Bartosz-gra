@@ -1,205 +1,153 @@
 <!DOCTYPE html><html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <title>Bananowe Banany: Zdrada Bartosza</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gra Bartosza</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #fff8dc;
-      color: #333;
+      background-color: #f9f9f9;
       padding: 20px;
-    }
-    #game {
       max-width: 600px;
       margin: auto;
-      background-color: #fff;
-      border: 2px solid #f4c542;
-      border-radius: 15px;
-      padding: 20px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    button {
+    h1, h2 {
+      text-align: center;
+    }
+    .hidden {
+      display: none;
+    }
+    .button {
       display: block;
-      width: 100%;
       margin: 10px 0;
       padding: 10px;
-      font-size: 16px;
-      background-color: #f4c542;
+      background-color: #4CAF50;
+      color: white;
       border: none;
-      border-radius: 10px;
       cursor: pointer;
-      transition: background-color 0.3s;
+      width: 100%;
     }
-    button:hover {
-      background-color: #e0b431;
+    .button:hover {
+      background-color: #45a049;
+    }
+    .message {
+      margin: 15px 0;
+      padding: 10px;
+      background-color: #e7f3fe;
+      border-left: 6px solid #2196F3;
     }
   </style>
 </head>
 <body>
-  <div id="game">
-    <div id="output"></div>
-    <div id="choices"></div>
-  </div>  <script>
-    const characters = {
-      "Eryk": {
-        intro: "Jesteś Erykiem z Białogardu. Grałeś z Bartkiem w Wild Rift, ale zdradził waszą ekipę...",
-        scenes: [
-          {
-            text: "Widzisz Bartka online. Pamiętasz jak kiedyś graliście. Co robisz?",
-            choices: [
-              { text: "Zignoruj go, cwel nie zasługuje.", score: 0 },
-              { text: "Napisz do niego pasyw-agresywnie.", score: 1 },
-              { text: "Przypomnij mu, co stracił.", score: 2 }
-            ]
-          },
-          {
-            text: "Bartek odpowiada wymijająco. Co teraz?",
-            choices: [
-              { text: "Wyzywasz go od zdrajców.", score: 0 },
-              { text: "Wysyłasz mema z bananem.", score: 1 },
-              { text: "Piszesz szczerze, że ci żal tej znajomości.", score: 2 }
-            ]
-          }
-        ]
+  <h1>Gra Bartosza</h1>
+  <div id="messageBox" class="message hidden"></div>
+  <div id="game"></div>  <script>
+    const gameData = {
+      postacie: [
+        "Eryk", "Fabian", "Jakub", "Ola", "Nikola", "Kot", "Oliwia"
+      ],
+      zakończenia: {},
+      wybaczenia: {},
+      unlocked: {
+        Oliwia: false,
+        Bartek: false
       },
-      "Fabian": {
-        intro: "Jesteś Fabian. Dawałeś Bartkowi jadłospisy i plany treningowe. A on? Zdradził was. Nie masz czasu na takich.",
-        scenes: [
-          {
-            text: "Bartek pyta czy może wrócić do grupy. Co mówisz?",
-            choices: [
-              { text: "Nie mam czasu na cwelów.", score: 0 },
-              { text: "Najpierw zjedz kilogram białka.", score: 1 },
-              { text: "Pokaż że się zmieniłeś, może pogadamy.", score: 2 }
-            ]
-          },
-          {
-            text: "Bartek wrzuca zdjęcie energetyka 'DZIK'. Co robisz?",
-            choices: [
-              { text: "Wyśmiewasz go jak dzieciaka.", score: 0 },
-              { text: "Podsyłasz mu nowy plan treningowy.", score: 1 },
-              { text: "Piszesz że nie tędy droga, ale może jeszcze coś z niego będzie.", score: 2 }
-            ]
-          }
-        ]
-      },
-      "Jakub": {
-        intro: "Jesteś Jakub z Warszawy. Niezbyt znałeś Bartka, ale wiesz że to cwel. I to ci wystarczy.",
-        scenes: [
-          {
-            text: "Bartek wchodzi na wasz stary serwer. Co robisz?",
-            choices: [
-              { text: "Wyrzucasz go natychmiast.", score: 0 },
-              { text: "Wyzywasz go przez mikrofon.", score: 1 },
-              { text: "Proponujesz 'rozmowę' 1v1.", score: 2 }
-            ]
-          },
-          {
-            text: "Bartek pisze 'nie wiedziałem że to tak odbierzecie'. Co robisz?",
-            choices: [
-              { text: "Śmiejesz się i wychodzisz.", score: 0 },
-              { text: "Piszesz że jesteś za stary na takie bajki.", score: 1 },
-              { text: "Piszesz że może i nie znałeś go dobrze, ale to co zrobił mówi samo za siebie.", score: 2 }
-            ]
-          }
-        ]
-      },
-      "Nikola": {
-        intro: "Jesteś Nikola z Białegostoku. Nie możesz zapomnieć jak źle cię potraktował. Masz swoje zdanie o Bartku.",
-        scenes: [
-          {
-            text: "Bartek pisze 'Hej, jak tam?'. Co odpowiadasz?",
-            choices: [
-              { text: "Zostaw mnie w spokoju.", score: 0 },
-              { text: "Nie sądzisz że już za późno?", score: 1 },
-              { text: "Co chcesz osiągnąć tym pisaniem?", score: 2 }
-            ]
-          },
-          {
-            text: "Bartek próbuje się tłumaczyć. Jak reagujesz?",
-            choices: [
-              { text: "Ignorujesz go kompletnie.", score: 0 },
-              { text: "Odpisujesz sarkastycznie.", score: 1 },
-              { text: "Piszesz że może jeszcze kiedyś pogadacie, ale nie teraz.", score: 2 }
-            ]
-          }
-        ]
-      },
-      "Ola": {
-        intro: "Jesteś Ola z Białegostoku. Niezbyt znasz Bartka, ale słyszałaś o nim same złe rzeczy. To ci wystarczy.",
-        scenes: [
-          {
-            text: "Widzisz jego profil w propozycjach znajomych. Co robisz?",
-            choices: [
-              { text: "Blokujesz go od razu.", score: 0 },
-              { text: "Wysyłasz mu banana w wiadomości.", score: 1 },
-              { text: "Dodajesz go z ciekawości.", score: 2 }
-            ]
-          },
-          {
-            text: "Bartek pyta czy cię zna. Co robisz?",
-            choices: [
-              { text: "Odpisujesz: 'Nie, i tak zostanie'.", score: 0 },
-              { text: "Odpisujesz: 'Wiem o tobie wystarczająco'.", score: 1 },
-              { text: "Pytasz co chce osiągnąć.", score: 2 }
-            ]
-          }
-        ]
+      currentPath: [],
+    };
+
+    const gameContainer = document.getElementById("game");
+    const messageBox = document.getElementById("messageBox");
+
+    function showMessage(text) {
+      messageBox.textContent = text;
+      messageBox.classList.remove("hidden");
+    }
+
+    function clearMessage() {
+      messageBox.classList.add("hidden");
+    }
+
+    function startGame() {
+      clearMessage();
+      gameContainer.innerHTML = `<h2>Wybierz postać:</h2>`;
+
+      gameData.postacie.forEach(postac => {
+        if (postac === "Oliwia" && !gameData.unlocked.Oliwia) return;
+        if (postac === "Bartek" && !gameData.unlocked.Bartek) return;
+
+        const btn = document.createElement("button");
+        btn.className = "button";
+        btn.textContent = postac;
+        btn.onclick = () => startPath(postac);
+        gameContainer.appendChild(btn);
+      });
+
+      checkUnlocks();
+    }
+
+    function checkUnlocks() {
+      const zakończone = Object.keys(gameData.zakończenia);
+
+      const postacieZ3Zakończeniami = gameData.postacie.filter(p =>
+        gameData.zakończenia[p] && gameData.zakończenia[p].length >= 3
+      );
+
+      if (postacieZ3Zakończeniami.length >= 3 && !gameData.unlocked.Oliwia) {
+        gameData.unlocked.Oliwia = true;
+        showMessage("Odblokowano postać: Oliwia!");
       }
-    };
 
-    let currentCharacter = null;
-    let currentScene = 0;
-    let totalScore = 0;
-
-    function startGame(name) {
-      currentCharacter = characters[name];
-      currentScene = 0;
-      totalScore = 0;
-      document.getElementById("output").innerText = currentCharacter.intro;
-      setTimeout(() => showScene(), 2000);
+      const wybaczonePostacie = Object.keys(gameData.wybaczenia).filter(p => gameData.wybaczenia[p]);
+      if (wybaczonePostacie.length === gameData.postacie.length - 2 && !gameData.unlocked.Bartek) {
+        gameData.unlocked.Bartek = true;
+        gameData.postacie.push("Bartek");
+        showMessage("Wszystkie postacie wybaczyły Bartkowi. Odblokowano postać: Bartek!");
+      }
     }
 
-    function showScene() {
-      const scene = currentCharacter.scenes[currentScene];
-      document.getElementById("output").innerText = scene.text;
-      const choicesDiv = document.getElementById("choices");
-      choicesDiv.innerHTML = "";
-      scene.choices.forEach(choice => {
+    function startPath(postac) {
+      clearMessage();
+      gameData.currentPath = [postac];
+      showScene(postac, 1);
+    }
+
+    function showScene(postac, sceneNumber) {
+      gameContainer.innerHTML = `<h2>${postac} — Scena ${sceneNumber}</h2>`;
+      for (let i = 1; i <= 3; i++) {
         const btn = document.createElement("button");
-        btn.innerText = choice.text;
-        btn.onclick = () => {
-          totalScore += choice.score;
-          currentScene++;
-          if (currentScene < currentCharacter.scenes.length) {
-            showScene();
-          } else {
-            endGame();
-          }
-        };
-        choicesDiv.appendChild(btn);
-      });
+        btn.className = "button";
+        btn.textContent = `Opcja ${i}`;
+        btn.onclick = () => makeChoice(postac, sceneNumber, i);
+        gameContainer.appendChild(btn);
+      }
     }
 
-    function endGame() {
-      let message = "";
-      if (totalScore <= 1) message = "Nie wybaczasz Bartkowi. Nazywasz go cwelem. Tak kończy się ta historia.";
-      else if (totalScore <= 3) message = "Może jest jakaś szansa... Ale to długa droga.";
-      else message = "Wybaczasz Bartkowi. To było trudne, ale chyba warto było.";
-      document.getElementById("output").innerText = message;
-      document.getElementById("choices").innerHTML = "<button onclick=\"location.reload()\">Zagraj ponownie</button>";
+    function makeChoice(postac, scene, opcja) {
+      gameData.currentPath.push(`Scena ${scene}, Opcja ${opcja}`);
+
+      if (!gameData.zakończenia[postac]) gameData.zakończenia[postac] = [];
+      if (!gameData.zakończenia[postac].includes(`Zakończenie ${scene}.${opcja}`)) {
+        gameData.zakończenia[postac].push(`Zakończenie ${scene}.${opcja}`);
+      }
+
+      if (scene === 3) {
+        gameData.wybaczenia[postac] = opcja === 3;
+        showEnding(postac, opcja);
+      } else {
+        showScene(postac, scene + 1);
+      }
     }
 
-    // Pokaz wybór postaci
-    window.onload = () => {
-      const choicesDiv = document.getElementById("choices");
-      document.getElementById("output").innerText = "Wybierz postać:";
-      Object.keys(characters).forEach(name => {
-        const btn = document.createElement("button");
-        btn.innerText = name;
-        btn.onclick = () => startGame(name);
-        choicesDiv.appendChild(btn);
-      });
-    };
+    function showEnding(postac, opcja) {
+      gameContainer.innerHTML = `<h2>Zakończenie postaci ${postac}</h2><p>Wybrałeś opcję ${opcja}. ${opcja === 3 ? "Postać wybaczyła Bartkowi." : "Postać nie wybaczyła."}</p>`;
+      const btn = document.createElement("button");
+      btn.className = "button";
+      btn.textContent = "Powrót do wyboru postaci";
+      btn.onclick = startGame;
+      gameContainer.appendChild(btn);
+      checkUnlocks();
+    }
+
+    startGame();
   </script></body>
 </html>
