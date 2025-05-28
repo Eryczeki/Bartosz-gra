@@ -1,120 +1,205 @@
 <!DOCTYPE html><html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bananowe Banany: Zemsta</title>
+  <meta charset="UTF-8">
+  <title>Bananowe Banany: Zdrada Bartosza</title>
   <style>
     body {
-      background-color: #111;
-      color: #fff;
       font-family: Arial, sans-serif;
+      background-color: #fff8dc;
+      color: #333;
       padding: 20px;
     }
-    .hidden { display: none; }
-    .btn {
+    #game {
+      max-width: 600px;
+      margin: auto;
+      background-color: #fff;
+      border: 2px solid #f4c542;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    button {
       display: block;
+      width: 100%;
       margin: 10px 0;
       padding: 10px;
-      background-color: #333;
-      color: #fff;
+      font-size: 16px;
+      background-color: #f4c542;
       border: none;
+      border-radius: 10px;
       cursor: pointer;
+      transition: background-color 0.3s;
     }
-    .btn:hover { background-color: #555; }
+    button:hover {
+      background-color: #e0b431;
+    }
   </style>
 </head>
 <body>
-  <h1>Bananowe Banany: Zemsta</h1>
-  <div id="game"></div>
-  <script>
-    const characters = [
-      "Eryk", "Fabian", "Jakub", "Nikola", "Ola", "Kot"
-    ];
-    const unlocked = {
-      Oliwia: false,
-      Bartosz: false
+  <div id="game">
+    <div id="output"></div>
+    <div id="choices"></div>
+  </div>  <script>
+    const characters = {
+      "Eryk": {
+        intro: "Jesteś Erykiem z Białogardu. Grałeś z Bartkiem w Wild Rift, ale zdradził waszą ekipę...",
+        scenes: [
+          {
+            text: "Widzisz Bartka online. Pamiętasz jak kiedyś graliście. Co robisz?",
+            choices: [
+              { text: "Zignoruj go, cwel nie zasługuje.", score: 0 },
+              { text: "Napisz do niego pasyw-agresywnie.", score: 1 },
+              { text: "Przypomnij mu, co stracił.", score: 2 }
+            ]
+          },
+          {
+            text: "Bartek odpowiada wymijająco. Co teraz?",
+            choices: [
+              { text: "Wyzywasz go od zdrajców.", score: 0 },
+              { text: "Wysyłasz mema z bananem.", score: 1 },
+              { text: "Piszesz szczerze, że ci żal tej znajomości.", score: 2 }
+            ]
+          }
+        ]
+      },
+      "Fabian": {
+        intro: "Jesteś Fabian. Dawałeś Bartkowi jadłospisy i plany treningowe. A on? Zdradził was. Nie masz czasu na takich.",
+        scenes: [
+          {
+            text: "Bartek pyta czy może wrócić do grupy. Co mówisz?",
+            choices: [
+              { text: "Nie mam czasu na cwelów.", score: 0 },
+              { text: "Najpierw zjedz kilogram białka.", score: 1 },
+              { text: "Pokaż że się zmieniłeś, może pogadamy.", score: 2 }
+            ]
+          },
+          {
+            text: "Bartek wrzuca zdjęcie energetyka 'DZIK'. Co robisz?",
+            choices: [
+              { text: "Wyśmiewasz go jak dzieciaka.", score: 0 },
+              { text: "Podsyłasz mu nowy plan treningowy.", score: 1 },
+              { text: "Piszesz że nie tędy droga, ale może jeszcze coś z niego będzie.", score: 2 }
+            ]
+          }
+        ]
+      },
+      "Jakub": {
+        intro: "Jesteś Jakub z Warszawy. Niezbyt znałeś Bartka, ale wiesz że to cwel. I to ci wystarczy.",
+        scenes: [
+          {
+            text: "Bartek wchodzi na wasz stary serwer. Co robisz?",
+            choices: [
+              { text: "Wyrzucasz go natychmiast.", score: 0 },
+              { text: "Wyzywasz go przez mikrofon.", score: 1 },
+              { text: "Proponujesz 'rozmowę' 1v1.", score: 2 }
+            ]
+          },
+          {
+            text: "Bartek pisze 'nie wiedziałem że to tak odbierzecie'. Co robisz?",
+            choices: [
+              { text: "Śmiejesz się i wychodzisz.", score: 0 },
+              { text: "Piszesz że jesteś za stary na takie bajki.", score: 1 },
+              { text: "Piszesz że może i nie znałeś go dobrze, ale to co zrobił mówi samo za siebie.", score: 2 }
+            ]
+          }
+        ]
+      },
+      "Nikola": {
+        intro: "Jesteś Nikola z Białegostoku. Nie możesz zapomnieć jak źle cię potraktował. Masz swoje zdanie o Bartku.",
+        scenes: [
+          {
+            text: "Bartek pisze 'Hej, jak tam?'. Co odpowiadasz?",
+            choices: [
+              { text: "Zostaw mnie w spokoju.", score: 0 },
+              { text: "Nie sądzisz że już za późno?", score: 1 },
+              { text: "Co chcesz osiągnąć tym pisaniem?", score: 2 }
+            ]
+          },
+          {
+            text: "Bartek próbuje się tłumaczyć. Jak reagujesz?",
+            choices: [
+              { text: "Ignorujesz go kompletnie.", score: 0 },
+              { text: "Odpisujesz sarkastycznie.", score: 1 },
+              { text: "Piszesz że może jeszcze kiedyś pogadacie, ale nie teraz.", score: 2 }
+            ]
+          }
+        ]
+      },
+      "Ola": {
+        intro: "Jesteś Ola z Białegostoku. Niezbyt znasz Bartka, ale słyszałaś o nim same złe rzeczy. To ci wystarczy.",
+        scenes: [
+          {
+            text: "Widzisz jego profil w propozycjach znajomych. Co robisz?",
+            choices: [
+              { text: "Blokujesz go od razu.", score: 0 },
+              { text: "Wysyłasz mu banana w wiadomości.", score: 1 },
+              { text: "Dodajesz go z ciekawości.", score: 2 }
+            ]
+          },
+          {
+            text: "Bartek pyta czy cię zna. Co robisz?",
+            choices: [
+              { text: "Odpisujesz: 'Nie, i tak zostanie'.", score: 0 },
+              { text: "Odpisujesz: 'Wiem o tobie wystarczająco'.", score: 1 },
+              { text: "Pytasz co chce osiągnąć.", score: 2 }
+            ]
+          }
+        ]
+      }
     };
-    const completions = {
-      Eryk: new Set(),
-      Fabian: new Set(),
-      Jakub: new Set(),
-      Nikola: new Set(),
-      Ola: new Set(),
-      Kot: new Set()
+
+    let currentCharacter = null;
+    let currentScene = 0;
+    let totalScore = 0;
+
+    function startGame(name) {
+      currentCharacter = characters[name];
+      currentScene = 0;
+      totalScore = 0;
+      document.getElementById("output").innerText = currentCharacter.intro;
+      setTimeout(() => showScene(), 2000);
+    }
+
+    function showScene() {
+      const scene = currentCharacter.scenes[currentScene];
+      document.getElementById("output").innerText = scene.text;
+      const choicesDiv = document.getElementById("choices");
+      choicesDiv.innerHTML = "";
+      scene.choices.forEach(choice => {
+        const btn = document.createElement("button");
+        btn.innerText = choice.text;
+        btn.onclick = () => {
+          totalScore += choice.score;
+          currentScene++;
+          if (currentScene < currentCharacter.scenes.length) {
+            showScene();
+          } else {
+            endGame();
+          }
+        };
+        choicesDiv.appendChild(btn);
+      });
+    }
+
+    function endGame() {
+      let message = "";
+      if (totalScore <= 1) message = "Nie wybaczasz Bartkowi. Nazywasz go cwelem. Tak kończy się ta historia.";
+      else if (totalScore <= 3) message = "Może jest jakaś szansa... Ale to długa droga.";
+      else message = "Wybaczasz Bartkowi. To było trudne, ale chyba warto było.";
+      document.getElementById("output").innerText = message;
+      document.getElementById("choices").innerHTML = "<button onclick=\"location.reload()\">Zagraj ponownie</button>";
+    }
+
+    // Pokaz wybór postaci
+    window.onload = () => {
+      const choicesDiv = document.getElementById("choices");
+      document.getElementById("output").innerText = "Wybierz postać:";
+      Object.keys(characters).forEach(name => {
+        const btn = document.createElement("button");
+        btn.innerText = name;
+        btn.onclick = () => startGame(name);
+        choicesDiv.appendChild(btn);
+      });
     };
-    let currentCharacter = null;function saveEnding(char, ending) {
-  completions[char].add(ending);
-  checkUnlocks();
-}
-
-function checkUnlocks() {
-  const full = Object.values(completions).filter(set => set.size === 3).length;
-  if (full >= 3) unlocked.Oliwia = true;
-
-  const forgiveness = Object.entries(completions).every(([char, set]) => {
-    if (char === "Bartosz") return true;
-    return set.has("wybaczenie");
-  });
-  if (forgiveness) unlocked.Bartosz = true;
-}
-
-function startGame() {
-  let html = '<h2>Wybierz postać</h2>';
-  characters.forEach(name => {
-    html += `<button class="btn" onclick="playAs('${name}')">${name}</button>`;
-  });
-  if (unlocked.Oliwia) html += '<button class="btn" onclick="playAs(\'Oliwia\')">Oliwia Wach (ODBLOCKOWANA)</button>';
-  if (unlocked.Bartosz) html += '<button class="btn" onclick="playAs(\'Bartosz\')">Bartosz (ODBLOCKOWANY)</button>';
-  document.getElementById("game").innerHTML = html;
-}
-
-function playAs(name) {
-  currentCharacter = name;
-  showScene(1);
-}
-
-function showScene(stage) {
-  const endings = {
-    1: [
-      { text: "Wyzywasz Bartosza od zdrajców", result: "nienawiść" },
-      { text: "Ignorujesz temat, ale cię to boli", result: "obojętność" },
-      { text: "Wybaczasz mu po cichu", result: "wybaczenie" }
-    ],
-    2: [
-      { text: "Spotykasz go na czacie i go blokujesz", result: "nienawiść" },
-      { text: "Pytasz co się stało", result: "obojętność" },
-      { text: "Mówisz że tęsknisz za dawnymi czasami", result: "wybaczenie" }
-    ],
-    3: [
-      { text: "Wysyłasz mu mema o dziku", result: "wybaczenie" },
-      { text: "Wrzucasz go na czarną listę", result: "nienawiść" },
-      { text: "Piszesz tylko 'xd'", result: "obojętność" }
-    ]
-  };
-
-  if (stage > 3) {
-    const set = completions[currentCharacter];
-    const counts = [...set];
-    const final = counts.length ? counts[counts.length - 1] : "neutralność";
-    saveEnding(currentCharacter, final);
-    document.getElementById("game").innerHTML = `<h2>Koniec ścieżki postaci: ${currentCharacter}</h2><p>Zakończenie: ${final}</p><button class='btn' onclick='startGame()'>Wróć</button>`;
-    return;
-  }
-
-  let html = `<h2>${currentCharacter} - Etap ${stage}</h2>`;
-  endings[stage].forEach(option => {
-    html += `<button class='btn' onclick='handleChoice(${stage}, \"${option.result}\")'>${option.text}</button>`;
-  });
-  document.getElementById("game").innerHTML = html;
-}
-
-function handleChoice(stage, result) {
-  completions[currentCharacter].add(result);
-  showScene(stage + 1);
-}
-
-startGame();
-
-  </script>
-</body>
+  </script></body>
 </html>
