@@ -1,210 +1,120 @@
-<!DOCTYPE html>
-<html lang="pl">
+<!DOCTYPE html><html lang="pl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Bananowe Banany - Gra</title>
-<style>
-  body {
-    background: #ffeb3b;
-    font-family: 'Arial', sans-serif;
-    text-align: center;
-    padding: 20px;
-    margin: 0;
-  }
-  #startScreen {
-    margin-top: 100px;
-  }
-  h1 {
-    font-size: 2.5em;
-    margin-bottom: 20px;
-    color: #4caf50;
-  }
-  p {
-    font-size: 1.3em;
-    margin-bottom: 40px;
-  }
-  button {
-    background-color: #4caf50;
-    color: white;
-    font-size: 1.5em;
-    padding: 15px 40px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-  }
-  button:hover {
-    background-color: #388e3c;
-  }
-  #gameScreen {
-    display: none;
-    max-width: 600px;
-    margin: auto;
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 0 10px #333;
-    text-align: left;
-    color: black;
-  }
-  #dialogue {
-    margin-bottom: 20px;
-    font-size: 1.2em;
-    min-height: 100px;
-  }
-  #choices button {
-    display: block;
-    width: 100%;
-    margin: 8px 0;
-    padding: 12px;
-    font-size: 1em;
-    border-radius: 8px;
-    border: 1px solid #4caf50;
-    background-color: #a5d6a7;
-    cursor: pointer;
-  }
-  #choices button:hover {
-    background-color: #81c784;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bananowe Banany: Zemsta</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .hidden { display: none; }
+    .btn {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #333;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    .btn:hover { background-color: #555; }
+  </style>
 </head>
 <body>
+  <h1>Bananowe Banany: Zemsta</h1>
+  <div id="game"></div>
+  <script>
+    const characters = [
+      "Eryk", "Fabian", "Jakub", "Nikola", "Ola", "Kot"
+    ];
+    const unlocked = {
+      Oliwia: false,
+      Bartosz: false
+    };
+    const completions = {
+      Eryk: new Set(),
+      Fabian: new Set(),
+      Jakub: new Set(),
+      Nikola: new Set(),
+      Ola: new Set(),
+      Kot: new Set()
+    };
+    let currentCharacter = null;function saveEnding(char, ending) {
+  completions[char].add(ending);
+  checkUnlocks();
+}
 
-  <div id="startScreen">
-    <h1>Bananowe Banany - Zdrada Bartosza</h1>
-    <p>Wybierz postać i rozpocznij grę!</p>
-    <button id="startBtn">Start</button>
-  </div>
+function checkUnlocks() {
+  const full = Object.values(completions).filter(set => set.size === 3).length;
+  if (full >= 3) unlocked.Oliwia = true;
 
-  <div id="gameScreen">
-    <div id="dialogue"></div>
-    <div id="choices"></div>
-  </div>
+  const forgiveness = Object.entries(completions).every(([char, set]) => {
+    if (char === "Bartosz") return true;
+    return set.has("wybaczenie");
+  });
+  if (forgiveness) unlocked.Bartosz = true;
+}
 
-<script>
-  const startBtn = document.getElementById('startBtn');
-  const startScreen = document.getElementById('startScreen');
-  const gameScreen = document.getElementById('gameScreen');
-  const dialogueEl = document.getElementById('dialogue');
-  const choicesEl = document.getElementById('choices');
+function startGame() {
+  let html = '<h2>Wybierz postać</h2>';
+  characters.forEach(name => {
+    html += `<button class="btn" onclick="playAs('${name}')">${name}</button>`;
+  });
+  if (unlocked.Oliwia) html += '<button class="btn" onclick="playAs(\'Oliwia\')">Oliwia Wach (ODBLOCKOWANA)</button>';
+  if (unlocked.Bartosz) html += '<button class="btn" onclick="playAs(\'Bartosz\')">Bartosz (ODBLOCKOWANY)</button>';
+  document.getElementById("game").innerHTML = html;
+}
 
-  // DANE POSTACI I DIALOGÓW - uproszczone przykłady do rozbudowy
-  const characters = {
-    eryk: {
-      name: "Eryk",
-      intro: "Eryk: Grałem z Bartkiem w Wild Rift i nadal nie mogę mu wybaczyć zdrady.",
-      dialogues: [
-        {
-          text: "Jak chcesz podejść do Bartka?",
-          choices: [
-            { text: "Zbesztaj go za zdradę", points: { eryk: 1 } },
-            { text: "Spróbuj zrozumieć co się stało", points: { eryk: 0 } },
-            { text: "Zignoruj i odejdź", points: { eryk: -1 } }
-          ]
-        },
-        {
-          text: "Eryk kontynuuje rozmowę: 'Nie mogę uwierzyć, że nas tak wystawił!'",
-          choices: [
-            { text: "Masz rację, Bartek to cwel.", points: { eryk: 1 } },
-            { text: "Może coś mu się stało?", points: { eryk: 0 } },
-            { text: "Trzeba go olać i iść dalej.", points: { eryk: -1 } }
-          ]
-        }
-      ]
-    },
-    fabian: {
-      name: "Fabian",
-      intro: "Fabian: Zdrada Bartka? Nie miałbym na to czasu, cwelu.",
-      dialogues: [
-        {
-          text: "Fabian mówi: 'Miałem mu dawać jadłospisy i treningi, a on...'",
-          choices: [
-            { text: "Krytykuj go za brak szacunku", points: { fabian: 1 } },
-            { text: "Spróbuj usprawiedliwić", points: { fabian: 0 } },
-            { text: "Zignoruj temat", points: { fabian: -1 } }
-          ]
-        },
-        {
-          text: "Fabian: 'Nie mam dla niego litości, zdradził grupę.'",
-          choices: [
-            { text: "Zgadzasz się z Fabianem", points: { fabian: 1 } },
-            { text: "Mówisz, że każdy zasługuje na szansę", points: { fabian: 0 } },
-            { text: "Mówisz, że to tylko gra", points: { fabian: -1 } }
-          ]
-        }
-      ]
-    },
-    // Dodaj pozostałe postacie analogicznie
+function playAs(name) {
+  currentCharacter = name;
+  showScene(1);
+}
+
+function showScene(stage) {
+  const endings = {
+    1: [
+      { text: "Wyzywasz Bartosza od zdrajców", result: "nienawiść" },
+      { text: "Ignorujesz temat, ale cię to boli", result: "obojętność" },
+      { text: "Wybaczasz mu po cichu", result: "wybaczenie" }
+    ],
+    2: [
+      { text: "Spotykasz go na czacie i go blokujesz", result: "nienawiść" },
+      { text: "Pytasz co się stało", result: "obojętność" },
+      { text: "Mówisz że tęsknisz za dawnymi czasami", result: "wybaczenie" }
+    ],
+    3: [
+      { text: "Wysyłasz mu mema o dziku", result: "wybaczenie" },
+      { text: "Wrzucasz go na czarną listę", result: "nienawiść" },
+      { text: "Piszesz tylko 'xd'", result: "obojętność" }
+    ]
   };
 
-  let currentCharacter = null;
-  let currentDialogueIndex = 0;
-  let points = {};
-
-  // Funkcja startowa gry - pokazuje wybór postaci
-  function showCharacterSelection() {
-    dialogueEl.innerHTML = "<h2>Wybierz swoją postać:</h2>";
-    choicesEl.innerHTML = "";
-
-    for (const key in characters) {
-      const btn = document.createElement('button');
-      btn.textContent = characters[key].name;
-      btn.onclick = () => {
-        currentCharacter = characters[key];
-        currentDialogueIndex = 0;
-        points = { eryk: 0, fabian: 0 }; // Tutaj rozszerz do wszystkich postaci
-        startGame();
-      };
-      choicesEl.appendChild(btn);
-    }
+  if (stage > 3) {
+    const set = completions[currentCharacter];
+    const counts = [...set];
+    const final = counts.length ? counts[counts.length - 1] : "neutralność";
+    saveEnding(currentCharacter, final);
+    document.getElementById("game").innerHTML = `<h2>Koniec ścieżki postaci: ${currentCharacter}</h2><p>Zakończenie: ${final}</p><button class='btn' onclick='startGame()'>Wróć</button>`;
+    return;
   }
 
-  // Funkcja startuje dialogi danej postaci
-  function startGame() {
-    dialogueEl.textContent = currentCharacter.intro;
-    choicesEl.innerHTML = `<button id="nextBtn">Dalej</button>`;
-    document.getElementById('nextBtn').onclick = () => {
-      showDialogue(currentDialogueIndex);
-    };
-  }
-
-  // Pokazuje dialog i wybory
-  function showDialogue(index) {
-    if (index >= currentCharacter.dialogues.length) {
-      endGame();
-      return;
-    }
-    const dialogue = currentCharacter.dialogues[index];
-    dialogueEl.textContent = dialogue.text;
-    choicesEl.innerHTML = "";
-
-    dialogue.choices.forEach((choice, i) => {
-      const btn = document.createElement('button');
-      btn.textContent = choice.text;
-      btn.onclick = () => {
-        for (const p in choice.points) {
-          points[p] = (points[p] || 0) + choice.points[p];
-        }
-        currentDialogueIndex++;
-        showDialogue(currentDialogueIndex);
-      };
-      choicesEl.appendChild(btn);
-    });
-  }
-
-  // Zakończenie gry (na razie proste)
-  function endGame() {
-    dialogueEl.innerHTML = `<h2>Koniec gry!</h2><p>Dzięki za granie.</p>`;
-    choicesEl.innerHTML = `<button onclick="showCharacterSelection()">Zagraj ponownie</button>`;
-  }
-
-  // Start gry po kliknięciu przycisku
-  startBtn.addEventListener('click', () => {
-    startScreen.style.display = 'none';
-    gameScreen.style.display = 'block';
-    showCharacterSelection();
+  let html = `<h2>${currentCharacter} - Etap ${stage}</h2>`;
+  endings[stage].forEach(option => {
+    html += `<button class='btn' onclick='handleChoice(${stage}, \"${option.result}\")'>${option.text}</button>`;
   });
+  document.getElementById("game").innerHTML = html;
+}
 
-</script>
+function handleChoice(stage, result) {
+  completions[currentCharacter].add(result);
+  showScene(stage + 1);
+}
+
+startGame();
+
+  </script>
 </body>
 </html>
