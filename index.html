@@ -1,153 +1,102 @@
 <!DOCTYPE html><html lang="pl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gra Bartosza</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gra Bartosz</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f9f9f9;
-      padding: 20px;
-      max-width: 600px;
-      margin: auto;
-    }
-    h1, h2 {
-      text-align: center;
-    }
-    .hidden {
-      display: none;
-    }
-    .button {
-      display: block;
-      margin: 10px 0;
-      padding: 10px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      cursor: pointer;
-      width: 100%;
-    }
-    .button:hover {
-      background-color: #45a049;
-    }
-    .message {
-      margin: 15px 0;
-      padding: 10px;
-      background-color: #e7f3fe;
-      border-left: 6px solid #2196F3;
-    }
+    body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; padding: 20px; }
+    #game { max-width: 600px; margin: auto; background: #1e1e1e; padding: 20px; border-radius: 10px; }
+    .choice { display: block; margin: 10px 0; background: #333; border: none; color: white; padding: 10px; border-radius: 5px; cursor: pointer; }
+    .choice:hover { background: #555; }
+    #characterSelect button { margin: 5px; }
   </style>
 </head>
 <body>
-  <h1>Gra Bartosza</h1>
-  <div id="messageBox" class="message hidden"></div>
-  <div id="game"></div>  <script>
-    const gameData = {
-      postacie: [
-        "Eryk", "Fabian", "Jakub", "Ola", "Nikola", "Kot", "Oliwia"
-      ],
-      zakończenia: {},
-      wybaczenia: {},
-      unlocked: {
-        Oliwia: false,
-        Bartek: false
-      },
-      currentPath: [],
-    };
+<div id="game">
+  <div id="characterSelect"></div>
+  <div id="story"></div>
+</div>
+<script>
+const characters = {
+  "Eryk": [
+    ["Co robisz, gdy słyszysz o zdradzie Bartka?", [
+      { text: "Zawiedziony odwracam się i odchodzę.", points: 1 },
+      { text: "Próbuję zrozumieć co się stało.", points: 2 },
+      { text: "Nie wierzę w to, co słyszę.", points: 3 }
+    ]],
+    ["Czy warto mu dać drugą szansę?", [
+      { text: "Nie, zdrada to koniec.", points: 1 },
+      { text: "Może, jeśli przeprosi.", points: 2 },
+      { text: "Tak, każdy zasługuje na drugą szansę.", points: 3 }
+    ]],
+    ["Jak kończysz tę historię?", [
+      { text: "Zerwana przyjaźń.", ending: "konflikt" },
+      { text: "Neutralny kontakt.", ending: "neutral" },
+      { text: "Wybaczenie i nowy początek.", ending: "wybaczenie" }
+    ]]
+  ],
+  "Fabian": [
+    ["Jak zareagowałeś na wieść o Bartku?", [
+      { text: "Nie mam czasu na takich ludzi.", points: 1 },
+      { text: "W sumie mi go nie szkoda.", points: 2 },
+      { text: "Trochę żal, ale co poradzić.", points: 3 }
+    ]],
+    ["Czy pijesz DZIKA po treningu?", [
+      { text: "Zawsze, to klasyk.", points: 3 },
+      { text: "Czasem, jak akurat mam.", points: 2 },
+      { text: "Wolę białko.", points: 1 }
+    ]],
+    ["Zakończenie historii?", [
+      { text: "Wycinasz go z życia.", ending: "konflikt" },
+      { text: "Niech sobie żyje, nie mój problem.", ending: "neutral" },
+      { text: "Wybaczasz mu.", ending: "wybaczenie" }
+    ]]
+  ],
+  "Jakub": [
+    ["Co sądzisz o całej dramie z Bartkiem?", [
+      { text: "Nie mój cyrk, nie moje małpy.", points: 1 },
+      { text: "Zwykła ludzka głupota.", points: 2 },
+      { text: "Eh, jak zwykle.", points: 3 }
+    ]],
+    ["Czy poświęcisz mu jeszcze czas?", [
+      { text: "Nie warto.", points: 1 },
+      { text: "Zależy, jak się zachowa.", points: 2 },
+      { text: "Może, ale nie od razu.", points: 3 }
+    ]],
+    ["Zakończenie?", [
+      { text: "Ignorujesz go.", ending: "konflikt" },
+      { text: "Trzymasz dystans.", ending: "neutral" },
+      { text: "Wybaczasz, ale ostrożnie.", ending: "wybaczenie" }
+    ]]
+  ],
+  "Kot": [
+    ["Kot patrzy na Bartka i...", [
+      { text: "Syknie i ucieknie.", points: 1 },
+      { text: "Zignoruje go z godnością.", points: 2 },
+      { text: "Mruknie coś w stylu 'żałosne'.", points: 3 }
+    ]],
+    ["Kot słyszy plotki...", [
+      { text: "Ziewa.", points: 1 },
+      { text: "Mruczy z niezadowoleniem.", points: 2 },
+      { text: "Wchodzi na szafę i nie schodzi.", points: 3 }
+    ]],
+    ["Kot kończy historię:", [
+      { text: "Nie zna typa.", ending: "konflikt" },
+      { text: "Trzyma się na dystans.", ending: "neutral" },
+      { text: "Pozwala się podrapać.", ending: "wybaczenie" }
+    ]]
+  ]
+};let state = { currentChar: null, stage: 0, score: 0, endings: {}, unlocked: { "Eryk": true, "Fabian": true, "Jakub": true, "Kot": true }, };
 
-    const gameContainer = document.getElementById("game");
-    const messageBox = document.getElementById("messageBox");
+function showCharacters() { const div = document.getElementById("characterSelect"); div.innerHTML = "<h2>Wybierz postać</h2>"; for (const char in characters) { if (state.unlocked[char]) { const btn = document.createElement("button"); btn.textContent = char; btn.onclick = () => startStory(char); btn.className = "choice"; div.appendChild(btn); } } document.getElementById("story").innerHTML = ""; }
 
-    function showMessage(text) {
-      messageBox.textContent = text;
-      messageBox.classList.remove("hidden");
-    }
+function startStory(char) { state.currentChar = char; state.stage = 0; state.score = 0; document.getElementById("characterSelect").innerHTML = ""; nextStage(); }
 
-    function clearMessage() {
-      messageBox.classList.add("hidden");
-    }
+function nextStage() { const part = characters[state.currentChar][state.stage]; const div = document.getElementById("story"); div.innerHTML = <h3>${part[0]}</h3>; part[1].forEach(opt => { const btn = document.createElement("button"); btn.textContent = opt.text; btn.className = "choice"; btn.onclick = () => { if (opt.points) { state.score += opt.points; state.stage++; nextStage(); } else if (opt.ending) { state.endings[state.currentChar] = opt.ending; checkUnlocks(); showCharacters(); } }; div.appendChild(btn); }); }
 
-    function startGame() {
-      clearMessage();
-      gameContainer.innerHTML = `<h2>Wybierz postać:</h2>`;
+function checkUnlocks() { const endings = Object.values(state.endings); const uniqueEndings = {}; for (const [char, ending] of Object.entries(state.endings)) { if (!uniqueEndings[char]) uniqueEndings[char] = new Set(); uniqueEndings[char].add(ending); } let completed = 0; for (const sets of Object.values(uniqueEndings)) { if (sets.size >= 3) completed++; } if (completed >= 3) state.unlocked["Oliwia"] = true; const forgiven = Object.values(state.endings).filter(e => e === "wybaczenie").length; if (forgiven === Object.keys(characters).length) state.unlocked["Bartek"] = true; }
 
-      gameData.postacie.forEach(postac => {
-        if (postac === "Oliwia" && !gameData.unlocked.Oliwia) return;
-        if (postac === "Bartek" && !gameData.unlocked.Bartek) return;
+showCharacters(); </script>
 
-        const btn = document.createElement("button");
-        btn.className = "button";
-        btn.textContent = postac;
-        btn.onclick = () => startPath(postac);
-        gameContainer.appendChild(btn);
-      });
-
-      checkUnlocks();
-    }
-
-    function checkUnlocks() {
-      const zakończone = Object.keys(gameData.zakończenia);
-
-      const postacieZ3Zakończeniami = gameData.postacie.filter(p =>
-        gameData.zakończenia[p] && gameData.zakończenia[p].length >= 3
-      );
-
-      if (postacieZ3Zakończeniami.length >= 3 && !gameData.unlocked.Oliwia) {
-        gameData.unlocked.Oliwia = true;
-        showMessage("Odblokowano postać: Oliwia!");
-      }
-
-      const wybaczonePostacie = Object.keys(gameData.wybaczenia).filter(p => gameData.wybaczenia[p]);
-      if (wybaczonePostacie.length === gameData.postacie.length - 2 && !gameData.unlocked.Bartek) {
-        gameData.unlocked.Bartek = true;
-        gameData.postacie.push("Bartek");
-        showMessage("Wszystkie postacie wybaczyły Bartkowi. Odblokowano postać: Bartek!");
-      }
-    }
-
-    function startPath(postac) {
-      clearMessage();
-      gameData.currentPath = [postac];
-      showScene(postac, 1);
-    }
-
-    function showScene(postac, sceneNumber) {
-      gameContainer.innerHTML = `<h2>${postac} — Scena ${sceneNumber}</h2>`;
-      for (let i = 1; i <= 3; i++) {
-        const btn = document.createElement("button");
-        btn.className = "button";
-        btn.textContent = `Opcja ${i}`;
-        btn.onclick = () => makeChoice(postac, sceneNumber, i);
-        gameContainer.appendChild(btn);
-      }
-    }
-
-    function makeChoice(postac, scene, opcja) {
-      gameData.currentPath.push(`Scena ${scene}, Opcja ${opcja}`);
-
-      if (!gameData.zakończenia[postac]) gameData.zakończenia[postac] = [];
-      if (!gameData.zakończenia[postac].includes(`Zakończenie ${scene}.${opcja}`)) {
-        gameData.zakończenia[postac].push(`Zakończenie ${scene}.${opcja}`);
-      }
-
-      if (scene === 3) {
-        gameData.wybaczenia[postac] = opcja === 3;
-        showEnding(postac, opcja);
-      } else {
-        showScene(postac, scene + 1);
-      }
-    }
-
-    function showEnding(postac, opcja) {
-      gameContainer.innerHTML = `<h2>Zakończenie postaci ${postac}</h2><p>Wybrałeś opcję ${opcja}. ${opcja === 3 ? "Postać wybaczyła Bartkowi." : "Postać nie wybaczyła."}</p>`;
-      const btn = document.createElement("button");
-      btn.className = "button";
-      btn.textContent = "Powrót do wyboru postaci";
-      btn.onclick = startGame;
-      gameContainer.appendChild(btn);
-      checkUnlocks();
-    }
-
-    startGame();
-  </script></body>
+</body>
 </html>
